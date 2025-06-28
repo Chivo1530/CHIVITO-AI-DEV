@@ -1,0 +1,9 @@
+openai
+requests
+python-dotenv
+langchain
+tiktoken
+httpx
+beautifulsoup4
+fastapi
+uvicorn
