@@ -34,7 +34,7 @@ def test_supabase_auth_direct():
     
     # Test 2: Test signup with a real email format
     print("\n2. Testing signup flow...")
-    test_email = f"ceo+test_{uuid.uuid4().hex[:8]}@chivito.ai"
+    test_email = f"test{uuid.uuid4().hex[:8]}@chivitoai.com"
     signup_payload = {
         "email": test_email,
         "password": "ChivitoAI2025!"
