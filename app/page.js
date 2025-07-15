@@ -18,8 +18,14 @@ export default function ChivitoAI() {
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
+    // Set client-side flag
+    setIsClient(true)
+    
     // Initialize sample data
     initializeSampleData()
+    
+    // Initialize current time
+    setCurrentTime(new Date())
     
     // Update time every second
     const timeInterval = setInterval(() => {
