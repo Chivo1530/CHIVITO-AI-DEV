@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { Bot, Activity, TrendingUp, Users, Zap, Clock, Target, AlertCircle } from 'lucide-react'
+import { Bot, Activity, TrendingUp, Users, Zap, Clock, Target, AlertCircle, Send, Play, Pause, CheckCircle, MessageCircle, Brain, FileText, Settings } from 'lucide-react'
 
 export default function ChivitoAI() {
   const [activeTab, setActiveTab] = useState('dashboard')
@@ -8,6 +8,13 @@ export default function ChivitoAI() {
   const [leads, setLeads] = useState([])
   const [metrics, setMetrics] = useState({})
   const [currentTime, setCurrentTime] = useState(new Date())
+  const [workflowTemplates, setWorkflowTemplates] = useState([])
+  const [activeWorkflows, setActiveWorkflows] = useState([])
+  const [taskHistory, setTaskHistory] = useState([])
+  const [notifications, setNotifications] = useState([])
+  const [chatHistory, setChatHistory] = useState([])
+  const [chatMessage, setChatMessage] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     // Initialize sample data
@@ -21,6 +28,7 @@ export default function ChivitoAI() {
     // Simulate real-time updates every 10 seconds
     const updateInterval = setInterval(() => {
       updateAgentProgress()
+      updateNotifications()
     }, 10000)
 
     return () => {
@@ -167,9 +175,115 @@ export default function ChivitoAI() {
       automationHours: 8.5
     }
 
+    const sampleWorkflows = [
+      {
+        id: 1,
+        name: 'Lead Generation Blast',
+        description: 'Find 50 qualified leads in your target market',
+        icon: '🎯',
+        estimatedTime: '15 min',
+        agents: ['Lead Hunter', 'Content Creator'],
+        expectedResults: '50 leads, 15-20 responses'
+      },
+      {
+        id: 2,
+        name: 'Content Marketing Campaign',
+        description: 'Create and distribute content across all channels',
+        icon: '📢',
+        estimatedTime: '30 min',
+        agents: ['Content Creator', 'Social Media Manager'],
+        expectedResults: '2000+ impressions, 50+ engagements'
+      },
+      {
+        id: 3,
+        name: 'Sales Pipeline Acceleration',
+        description: 'Follow up with warm leads and book demos',
+        icon: '🚀',
+        estimatedTime: '20 min',
+        agents: ['Sales Closer', 'Customer Support'],
+        expectedResults: '3-5 demos scheduled'
+      }
+    ]
+
+    const sampleTaskHistory = [
+      {
+        id: 1,
+        agentName: 'Lead Hunter',
+        task: 'Found 3 new qualified prospects on LinkedIn',
+        timestamp: '2 min ago',
+        status: 'completed',
+        result: 'Success: 3 leads added to CRM',
+        duration: '2.3 min'
+      },
+      {
+        id: 2,
+        agentName: 'Content Creator',
+        task: 'Generated personalized email for Marcus Chen',
+        timestamp: '5 min ago',
+        status: 'completed',
+        result: 'Success: Email sent with 67% open rate prediction',
+        duration: '1.8 min'
+      },
+      {
+        id: 3,
+        agentName: 'Sales Closer',
+        task: 'Booked demo call with TechStartup Inc',
+        timestamp: '8 min ago',
+        status: 'completed',
+        result: 'Success: Demo scheduled for tomorrow 2PM',
+        duration: '3.2 min'
+      }
+    ]
+
+    const sampleNotifications = [
+      {
+        id: 1,
+        type: 'success',
+        message: 'Lead Hunter found 3 new qualified prospects',
+        timestamp: '2 min ago'
+      },
+      {
+        id: 2,
+        type: 'info',
+        message: 'Sales Closer scheduled demo with TechStartup Inc',
+        timestamp: '8 min ago'
+      },
+      {
+        id: 3,
+        type: 'warning',
+        message: 'Social Media Manager needs optimization',
+        timestamp: '15 min ago'
+      }
+    ]
+
+    const sampleChatHistory = [
+      {
+        id: 1,
+        type: 'ai',
+        message: 'Welcome to CHIVITO AI! I\'m your AI assistant. How can I help you optimize your business operations today?',
+        timestamp: '1 hour ago'
+      },
+      {
+        id: 2,
+        type: 'user',
+        message: 'How are my agents performing?',
+        timestamp: '50 min ago'
+      },
+      {
+        id: 3,
+        type: 'ai',
+        message: 'Your agents are performing excellently! 5/6 are active with 88% average success rate. Total revenue: $82,100. Would you like details on any specific agent?',
+        timestamp: '50 min ago'
+      }
+    ]
+
     setAgents(sampleAgents)
     setLeads(sampleLeads)
     setMetrics(sampleMetrics)
+    setWorkflowTemplates(sampleWorkflows)
+    setTaskHistory(sampleTaskHistory)
+    setNotifications(sampleNotifications)
+    setChatHistory(sampleChatHistory)
   }
 
   const updateAgentProgress = () => {
@@ -178,6 +292,101 @@ export default function ChivitoAI() {
       progress: agent.status === 'active' ? Math.min(100, agent.progress + Math.floor(Math.random() * 15)) : agent.progress,
       tasksCompleted: agent.status === 'active' ? agent.tasksCompleted + Math.floor(Math.random() * 3) : agent.tasksCompleted
     })))
+  }
+
+  const updateNotifications = () => {
+    const newNotification = {
+      id: Date.now(),
+      type: 'success',
+      message: 'Agent progress updated automatically',
+      timestamp: 'just now'
+    }
+    setNotifications(prev => [newNotification, ...prev.slice(0, 4)])
+  }
+
+  const triggerWorkflow = async (workflowId) => {
+    const workflow = workflowTemplates.find(w => w.id === workflowId)
+    if (!workflow) return
+
+    const newWorkflow = {
+      id: Date.now(),
+      name: workflow.name,
+      status: 'running',
+      progress: 0,
+      startTime: new Date().toISOString(),
+      estimatedCompletion: new Date(Date.now() + (parseInt(workflow.estimatedTime) * 60 * 1000)).toISOString(),
+      agents: workflow.agents
+    }
+
+    setActiveWorkflows(prev => [...prev, newWorkflow])
+    
+    // Add to task history
+    const newTask = {
+      id: Date.now(),
+      agentName: 'System',
+      task: `Started workflow: ${workflow.name}`,
+      timestamp: 'just now',
+      status: 'running',
+      result: 'Workflow initiated',
+      duration: 'Running'
+    }
+    setTaskHistory(prev => [newTask, ...prev])
+
+    // Add notification
+    const notification = {
+      id: Date.now(),
+      type: 'info',
+      message: `Workflow "${workflow.name}" started`,
+      timestamp: 'just now'
+    }
+    setNotifications(prev => [notification, ...prev.slice(0, 4)])
+  }
+
+  const sendMessage = async () => {
+    if (!chatMessage.trim()) return
+    
+    setIsLoading(true)
+    
+    // Add user message
+    const userMessage = {
+      id: Date.now(),
+      type: 'user',
+      message: chatMessage,
+      timestamp: 'just now'
+    }
+    setChatHistory(prev => [...prev, userMessage])
+    
+    // Simulate AI response
+    setTimeout(() => {
+      const aiResponse = {
+        id: Date.now() + 1,
+        type: 'ai',
+        message: generateAIResponse(chatMessage),
+        timestamp: 'just now'
+      }
+      setChatHistory(prev => [...prev, aiResponse])
+      setIsLoading(false)
+    }, 1500)
+    
+    setChatMessage('')
+  }
+
+  const generateAIResponse = (message) => {
+    const lower = message.toLowerCase()
+    
+    if (lower.includes('agent') && lower.includes('performance')) {
+      return 'Your agents are performing excellently! 🚀 5/6 are active with 88% average success rate. Total revenue generated: $82,100. Top performer: Customer Support (96% success rate). Would you like me to optimize any specific agent?'
+    }
+    
+    if (lower.includes('workflow') || lower.includes('automation')) {
+      return 'I can help you create powerful workflows! 📈 Available options: Lead Generation Blast (15 min), Content Marketing Campaign (30 min), Sales Pipeline Acceleration (20 min). Which would you like to start?'
+    }
+    
+    if (lower.includes('revenue') || lower.includes('money')) {
+      return 'Great news! 💰 Your revenue is up 34.5% this month to $82,100. Top earners: Sales Closer ($31K), Lead Hunter ($18.5K). Pipeline value: $425,500. Want me to create a revenue optimization strategy?'
+    }
+    
+    return 'I understand you\'re asking about: "' + message + '". I can help you with agent optimization, workflow automation, revenue analysis, and business insights. What specific area would you like to focus on?'
   }
 
   const getStatusColor = (status) => {
@@ -195,6 +404,15 @@ export default function ChivitoAI() {
       case 'warm': return 'bg-yellow-500'
       case 'cold': return 'bg-blue-500'
       default: return 'bg-gray-500'
+    }
+  }
+
+  const getNotificationColor = (type) => {
+    switch(type) {
+      case 'success': return 'border-green-500 bg-green-500/10'
+      case 'warning': return 'border-yellow-500 bg-yellow-500/10'
+      case 'error': return 'border-red-500 bg-red-500/10'
+      default: return 'border-blue-500 bg-blue-500/10'
     }
   }
 
@@ -229,7 +447,9 @@ export default function ChivitoAI() {
               { id: 'dashboard', label: 'Dashboard', icon: Activity },
               { id: 'agents', label: 'Agent Command', icon: Bot },
               { id: 'leads', label: 'Lead Pipeline', icon: Users },
-              { id: 'aigentz', label: 'AIGENTZ', icon: Zap },
+              { id: 'workflows', label: 'AI Execution', icon: Zap },
+              { id: 'aigentz', label: 'AIGENTZ', icon: Target },
+              { id: 'chat', label: 'AI Assistant', icon: MessageCircle },
               { id: 'analytics', label: 'Analytics', icon: TrendingUp }
             ].map(tab => (
               <button
@@ -248,6 +468,23 @@ export default function ChivitoAI() {
           </div>
         </div>
       </nav>
+
+      {/* Notifications Bar */}
+      {notifications.length > 0 && (
+        <div className="border-b border-gray-800 bg-gray-900/30">
+          <div className="max-w-7xl mx-auto px-6 py-2">
+            <div className="flex items-center space-x-4 overflow-x-auto">
+              {notifications.slice(0, 3).map(notification => (
+                <div key={notification.id} className={`flex items-center space-x-2 px-3 py-1 rounded-lg border text-sm ${getNotificationColor(notification.type)}`}>
+                  <AlertCircle size={14} />
+                  <span>{notification.message}</span>
+                  <span className="text-xs text-gray-400">({notification.timestamp})</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-8">
@@ -329,19 +566,14 @@ export default function ChivitoAI() {
             <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6">
               <h2 className="text-xl font-bold mb-6">⚡ Recent Activity</h2>
               <div className="space-y-4">
-                {[
-                  { time: '2 min ago', agent: 'Lead Hunter', action: 'Found 3 new qualified prospects on LinkedIn', type: 'success' },
-                  { time: '5 min ago', agent: 'Content Creator', action: 'Generated personalized email for Marcus Chen', type: 'success' },
-                  { time: '8 min ago', agent: 'Sales Closer', action: 'Booked demo call with TechStartup Inc', type: 'success' },
-                  { time: '12 min ago', agent: 'Customer Support', action: 'Resolved 2 support tickets automatically', type: 'success' },
-                  { time: '15 min ago', agent: 'Data Analyst', action: 'Identified high-value customer segment', type: 'info' }
-                ].map((activity, index) => (
-                  <div key={index} className="flex items-center space-x-4 p-3 bg-gray-800/30 rounded-lg">
-                    <div className={`w-2 h-2 rounded-full ${activity.type === 'success' ? 'bg-green-500' : 'bg-blue-500'}`}></div>
+                {taskHistory.slice(0, 5).map((task) => (
+                  <div key={task.id} className="flex items-center space-x-4 p-3 bg-gray-800/30 rounded-lg">
+                    <div className={`w-2 h-2 rounded-full ${task.status === 'completed' ? 'bg-green-500' : 'bg-blue-500'}`}></div>
                     <div className="flex-1">
-                      <div className="text-sm">{activity.action}</div>
-                      <div className="text-xs text-gray-500">{activity.agent} • {activity.time}</div>
+                      <div className="text-sm">{task.task}</div>
+                      <div className="text-xs text-gray-500">{task.agentName} • {task.timestamp}</div>
                     </div>
+                    <div className="text-xs text-gray-400">{task.duration}</div>
                   </div>
                 ))}
               </div>
@@ -502,6 +734,101 @@ export default function ChivitoAI() {
           </div>
         )}
 
+        {activeTab === 'workflows' && (
+          <div className="space-y-8">
+            <div className="flex items-center justify-between">
+              <h1 className="text-3xl font-bold">⚡ AI Execution Engine</h1>
+              <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+                + Create Workflow
+              </button>
+            </div>
+
+            {/* Workflow Templates */}
+            <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6">
+              <h2 className="text-xl font-bold mb-6">🚀 Quick Launch Workflows</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {workflowTemplates.map(workflow => (
+                  <div key={workflow.id} className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center space-x-2">
+                        <span className="text-2xl">{workflow.icon}</span>
+                        <span className="font-medium">{workflow.name}</span>
+                      </div>
+                      <span className="text-xs text-gray-400">{workflow.estimatedTime}</span>
+                    </div>
+                    <p className="text-sm text-gray-400 mb-3">{workflow.description}</p>
+                    <div className="text-xs text-gray-500 mb-3">
+                      Agents: {workflow.agents.join(', ')}
+                    </div>
+                    <div className="text-xs text-blue-400 mb-3">
+                      Expected: {workflow.expectedResults}
+                    </div>
+                    <button
+                      onClick={() => triggerWorkflow(workflow.id)}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg text-sm flex items-center justify-center space-x-2"
+                    >
+                      <Play size={14} />
+                      <span>Launch Workflow</span>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Active Workflows */}
+            {activeWorkflows.length > 0 && (
+              <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6">
+                <h2 className="text-xl font-bold mb-6">🔄 Active Workflows</h2>
+                <div className="space-y-4">
+                  {activeWorkflows.map(workflow => (
+                    <div key={workflow.id} className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-medium">{workflow.name}</span>
+                        <span className="text-sm text-gray-400">Running</span>
+                      </div>
+                      <div className="w-full bg-gray-700 rounded-full h-2 mb-2">
+                        <div 
+                          className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                          style={{ width: `${workflow.progress}%` }}
+                        ></div>
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        Agents: {workflow.agents.join(', ')}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Task History */}
+            <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6">
+              <h2 className="text-xl font-bold mb-6">📋 Task History</h2>
+              <div className="space-y-4">
+                {taskHistory.map((task) => (
+                  <div key={task.id} className="flex items-center space-x-4 p-3 bg-gray-800/30 rounded-lg">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                      task.status === 'completed' ? 'bg-green-500' : 'bg-blue-500'
+                    }`}>
+                      {task.status === 'completed' ? (
+                        <CheckCircle size={16} className="text-white" />
+                      ) : (
+                        <Clock size={16} className="text-white" />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-sm font-medium">{task.task}</div>
+                      <div className="text-xs text-gray-500">{task.agentName} • {task.timestamp}</div>
+                      <div className="text-xs text-gray-400">{task.result}</div>
+                    </div>
+                    <div className="text-xs text-gray-400">{task.duration}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {activeTab === 'aigentz' && (
           <div className="space-y-8">
             <div className="text-center">
@@ -538,6 +865,117 @@ export default function ChivitoAI() {
                   </button>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'chat' && (
+          <div className="space-y-8">
+            <div className="flex items-center justify-between">
+              <h1 className="text-3xl font-bold">🧠 AI Assistant</h1>
+              <div className="flex items-center space-x-2">
+                <Brain className="text-blue-400" size={20} />
+                <span className="text-sm text-gray-400">Memory & Context System</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+              {/* Chat Interface */}
+              <div className="lg:col-span-3 bg-gray-900/50 border border-gray-800 rounded-xl p-6">
+                <div className="h-96 overflow-y-auto mb-4 space-y-4">
+                  {chatHistory.map((msg) => (
+                    <div key={msg.id} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                        msg.type === 'user' 
+                          ? 'bg-blue-600 text-white' 
+                          : 'bg-gray-800 text-gray-100'
+                      }`}>
+                        <div className="text-sm">{msg.message}</div>
+                        <div className="text-xs text-gray-400 mt-1">{msg.timestamp}</div>
+                      </div>
+                    </div>
+                  ))}
+                  {isLoading && (
+                    <div className="flex justify-start">
+                      <div className="bg-gray-800 text-gray-100 px-4 py-2 rounded-lg">
+                        <div className="text-sm">AI is thinking...</div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="flex space-x-2">
+                  <input
+                    type="text"
+                    value={chatMessage}
+                    onChange={(e) => setChatMessage(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                    placeholder="Ask me anything about your business..."
+                    className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                    disabled={isLoading}
+                  />
+                  <button
+                    onClick={sendMessage}
+                    disabled={isLoading || !chatMessage.trim()}
+                    className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
+                  >
+                    <Send size={16} />
+                    <span>Send</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Context Cards */}
+              <div className="space-y-4">
+                <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4">
+                  <h3 className="font-bold mb-3 flex items-center space-x-2">
+                    <FileText size={16} />
+                    <span>Quick Actions</span>
+                  </h3>
+                  <div className="space-y-2">
+                    {[
+                      'Analyze agent performance',
+                      'Generate revenue report',
+                      'Optimize workflows',
+                      'Create lead strategy',
+                      'Review pipeline health'
+                    ].map((action, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setChatMessage(action)}
+                        className="w-full text-left text-sm text-gray-400 hover:text-blue-400 hover:bg-gray-800 p-2 rounded"
+                      >
+                        {action}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4">
+                  <h3 className="font-bold mb-3 flex items-center space-x-2">
+                    <Settings size={16} />
+                    <span>Business Context</span>
+                  </h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Revenue:</span>
+                      <span className="text-green-400">${metrics.totalRevenue?.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Active Agents:</span>
+                      <span className="text-blue-400">{metrics.activeAgents}/6</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Leads:</span>
+                      <span className="text-purple-400">{metrics.totalLeads}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Conversion:</span>
+                      <span className="text-orange-400">{metrics.conversionRate}%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}
