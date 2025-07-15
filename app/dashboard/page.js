@@ -508,6 +508,104 @@ export default function Dashboard() {
           </div>
         )}
 
+        {activeTab === 'assistant' && (
+          <div className="space-y-8 animate-fade-in">
+            {/* Ponch AI Assistant */}
+            <div className="premium-card p-8">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">🧠 Ponch AI Assistant</h2>
+                  <p className="text-gray-600">Your 24/7 personal business mentor and AI consultant</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                  <span className="text-sm text-green-600 font-medium">ONLINE</span>
+                </div>
+              </div>
+              
+              <PonchAIAssistant 
+                userProfile={profile}
+                businessData={{
+                  type: 'general',
+                  monthlyRevenue: metrics.totalRevenue || 0,
+                  activeAgents: metrics.activeAgents || 0,
+                  totalLeads: metrics.totalLeads || 0
+                }}
+              />
+            </div>
+
+            {/* Business Insights */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="premium-card p-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">📊 Ponch's Business Insights</h3>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div>
+                      <div className="font-medium text-gray-900">Time Saved This Month</div>
+                      <div className="text-sm text-gray-600">Through AI automation</div>
+                    </div>
+                    <div className="text-2xl font-bold text-royal-600">{metrics.automationHours || 0}h</div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div>
+                      <div className="font-medium text-gray-900">Revenue Potential</div>
+                      <div className="text-sm text-gray-600">From optimizations</div>
+                    </div>
+                    <div className="text-2xl font-bold text-green-600">+${((metrics.totalRevenue || 0) * 0.25).toLocaleString()}</div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div>
+                      <div className="font-medium text-gray-900">Pipeline Health</div>
+                      <div className="text-sm text-gray-600">Lead conversion rate</div>
+                    </div>
+                    <div className="text-2xl font-bold text-blue-600">28%</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="premium-card p-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">🎯 Smart Recommendations</h3>
+                <div className="space-y-4">
+                  <div className="p-4 bg-royal-50 border border-royal-200 rounded-lg">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <Crown className="w-5 h-5 text-royal-600" />
+                      <span className="font-medium text-royal-900">Inventory Automation</span>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-2">
+                      I learned the hard way with Tahoe Essentials - automate your inventory management to save 10+ hours/week.
+                    </p>
+                    <div className="text-xs text-royal-600 font-medium">ROI: $2,000/month saved</div>
+                  </div>
+                  
+                  <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <Target className="w-5 h-5 text-green-600" />
+                      <span className="font-medium text-green-900">Lead Nurturing</span>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-2">
+                      Automate your follow-up sequences to convert 40% more leads into customers.
+                    </p>
+                    <div className="text-xs text-green-600 font-medium">ROI: +$5,000/month revenue</div>
+                  </div>
+                  
+                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <MessageCircle className="w-5 h-5 text-blue-600" />
+                      <span className="font-medium text-blue-900">24/7 Customer Support</span>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-2">
+                      Never miss a customer inquiry again. AI responds instantly, humans handle complex cases.
+                    </p>
+                    <div className="text-xs text-blue-600 font-medium">ROI: 95% faster response time</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {activeTab === 'billing' && (
           <div className="space-y-8 animate-fade-in">
             <div className="premium-card p-8">
