@@ -674,11 +674,11 @@ class ChivitoAPITester:
                 time.sleep(2)
         
         # Run all tests
+        self.test_supabase_authentication_system()  # Priority 1: Authentication testing
         self.test_agents_api()
         self.test_lead_api()
         self.test_chat_api()
         self.test_workflows_api()
-        self.test_supabase_connection()
         self.test_stripe_configuration()
         self.test_ai_assistant_functionality()
         self.test_premium_features_access()
