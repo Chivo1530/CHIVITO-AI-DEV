@@ -1,5 +1,3 @@
-## 4. Create folder `app/api/lead/` and inside create `route.js`
-```javascript
 import { NextResponse } from 'next/server'
 
 export async function POST(request) {
@@ -41,23 +39,3 @@ export async function POST(request) {
     )
   }
 }
-```
-
-## Final Structure Should Look Like:
-```
-your-repo/
-├── app/
-│   ├── layout.js
-│   ├── page.js
-│   ├── globals.css
-│   └── api/
-│       └── lead/
-│           └── route.js
-├── .gitignore
-├── README.md
-├── next.config.js
-├── package.json
-├── postcss.config.js
-├── requirements.txt
-└── tailwind.config.js
-```
