@@ -40,9 +40,8 @@ export default async function LandingPage() {
     { id: 2, type: "info", message: "Content Creator published new blog post", time: "3 hours ago" },
     { id: 3, type: "warning", message: "Sales Closer needs attention on deal #1247", time: "5 hours ago" }
   ]
-  const [chatHistory, setChatHistory] = useState([])
-  const [chatMessage, setChatMessage] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+
+  return (
 
   useEffect(() => {
     // Set client-side flag
