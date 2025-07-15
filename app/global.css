@@ -56,14 +56,88 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--chivito-black);
 }
 
+/* Force all text to be visible and readable */
+* {
+  color: var(--chivito-black) !important;
+}
+
+/* Override specific elements that should have different colors */
+.royal-button, .royal-button * {
+  color: white !important;
+}
+
+.premium-button, .premium-button * {
+  color: var(--chivito-royal-red) !important;
+}
+
+.nav-item.active, .nav-item.active * {
+  color: white !important;
+}
+
+/* Brand title should keep its gradient */
 .brand-title {
   font-size: 2.5rem;
   font-weight: 800;
   background: linear-gradient(135deg, var(--chivito-royal-red) 0%, var(--chivito-gold) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
   background-clip: text;
   letter-spacing: -0.05em;
+}
+
+/* Status and metric colors */
+.status-online {
+  color: #10B981 !important;
+}
+
+.status-premium {
+  color: var(--chivito-royal-red) !important;
+}
+
+.metric-value {
+  color: var(--chivito-royal-red) !important;
+}
+
+/* Success/error message colors */
+.text-green-500, .text-green-600 {
+  color: #10B981 !important;
+}
+
+.text-red-500, .text-red-600 {
+  color: #EF4444 !important;
+}
+
+.text-royal-500, .text-royal-600 {
+  color: var(--chivito-royal-red) !important;
+}
+
+/* Ensure form inputs have proper text color */
+.premium-input, .premium-input * {
+  color: var(--chivito-black) !important;
+}
+
+.premium-input::placeholder {
+  color: var(--chivito-gray-500) !important;
+}
+
+/* Ensure all headings are black */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  color: var(--chivito-black) !important;
+}
+
+/* Override any Tailwind classes that might cause white text */
+.text-white {
+  color: var(--chivito-black) !important;
+}
+
+/* Except for elements that should actually be white */
+.royal-button .text-white,
+.nav-item.active .text-white {
+  color: white !important;
 }
 
 .premium-card {
