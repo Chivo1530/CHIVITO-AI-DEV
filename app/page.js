@@ -1,5 +1,3 @@
-## 2. Create `app/page.js`
-```javascript
 'use client'
 import { useState } from 'react'
 
@@ -162,4 +160,3 @@ export default function Home() {
     </div>
   )
 }
-```
