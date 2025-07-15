@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useRouter } from 'next/navigation'
 import Crown from './Crown'
 
 export default function AuthForm({ mode = 'signin' }) {
@@ -9,6 +10,7 @@ export default function AuthForm({ mode = 'signin' }) {
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const supabase = createClientComponentClient()
+  const router = useRouter()
 
   const handleAuth = async (e) => {
     e.preventDefault()
@@ -17,24 +19,43 @@ export default function AuthForm({ mode = 'signin' }) {
 
     try {
       if (mode === 'signin') {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         })
         if (error) throw error
+        
         setMessage('✅ Welcome back to CHIVITO AI!')
+        
+        // Redirect to dashboard after successful sign in
+        setTimeout(() => {
+          router.push('/dashboard')
+        }, 1500)
+        
       } else {
-        const { error } = await supabase.auth.signUp({
+        // Sign up mode
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
             emailRedirectTo: `${window.location.origin}/auth/callback`,
           },
         })
+        
         if (error) throw error
-        setMessage('✅ Check your email to confirm your account!')
+        
+        // Check if user needs email confirmation
+        if (data.user && !data.user.email_confirmed_at) {
+          setMessage('✅ Check your email to confirm your account!')
+        } else {
+          setMessage('✅ Account created! Redirecting to dashboard...')
+          setTimeout(() => {
+            router.push('/dashboard')
+          }, 1500)
+        }
       }
     } catch (error) {
+      console.error('Auth error:', error)
       setMessage(`❌ ${error.message}`)
     } finally {
       setLoading(false)
