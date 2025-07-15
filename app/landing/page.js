@@ -1,7 +1,7 @@
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import Crown from '../components/Crown'
+import Crown from '../../components/Crown'
 import { TrendingUp, Bot, Users, Zap, CheckCircle, ArrowRight, Sparkles, Target, Clock, Play, MessageCircle } from 'lucide-react'
 
 export default async function LandingPage() {
