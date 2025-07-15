@@ -334,42 +334,166 @@ class ChivitoAPITester:
         except Exception as e:
             self.log_test("Environment Variables", False, f"Environment test failed: {e}")
         
-        # Test 7: JWT Token Validation
+    def test_authentication_flow_simulation(self):
+        """Test actual authentication flow to identify Invalid API key issue"""
+        print("\n🔐 Testing Authentication Flow Simulation...")
+        
+        # Test 1: Test Supabase Auth API directly
         try:
-            # Test if the JWT secret is properly configured by checking token structure
+            supabase_url = "https://ntygisnllsawkuhuiuxc.supabase.co"
             anon_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50eWdpc25sbHNhd2t1aHVpdXhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE2OTMzMDYsImV4cCI6MjA2NzI2OTMwNn0.9f2af829b3d6599799d1cc9f44a59ea5"
             
-            # Basic JWT structure validation (should have 3 parts separated by dots)
-            jwt_parts = anon_key.split('.')
-            if len(jwt_parts) == 3:
-                self.log_test("JWT Token Structure", True, "JWT token has valid structure")
-                
-                # Check if token is not expired by decoding payload (basic check)
-                import base64
-                import json
+            headers = {
+                "apikey": anon_key,
+                "Authorization": f"Bearer {anon_key}",
+                "Content-Type": "application/json"
+            }
+            
+            # Test signup endpoint directly
+            signup_payload = {
+                "email": f"test_{uuid.uuid4().hex[:8]}@chivitoai.com",
+                "password": "testpassword123"
+            }
+            
+            response = requests.post(
+                f"{supabase_url}/auth/v1/signup",
+                headers=headers,
+                json=signup_payload,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                self.log_test("Direct Supabase Signup", True, "Supabase signup API is working correctly")
+            elif response.status_code == 400:
                 try:
-                    # Add padding if needed
-                    payload = jwt_parts[1]
-                    payload += '=' * (4 - len(payload) % 4)
-                    decoded = base64.b64decode(payload)
-                    token_data = json.loads(decoded)
-                    
-                    if 'exp' in token_data and 'iss' in token_data:
-                        # Check if token is from correct issuer
-                        if token_data['iss'] == 'supabase':
-                            self.log_test("JWT Token Content", True, "JWT token has valid Supabase issuer")
-                        else:
-                            self.log_test("JWT Token Content", False, f"JWT token has wrong issuer: {token_data['iss']}")
+                    error_data = response.json()
+                    if "Invalid API key" in str(error_data):
+                        self.log_test("Direct Supabase Signup", False, "Invalid API key error confirmed")
+                    elif "email" in str(error_data).lower():
+                        self.log_test("Direct Supabase Signup", True, "Supabase API working (email validation error)")
                     else:
-                        self.log_test("JWT Token Content", False, "JWT token missing required fields")
-                        
-                except Exception as decode_error:
-                    self.log_test("JWT Token Content", False, f"JWT decode error: {decode_error}")
+                        self.log_test("Direct Supabase Signup", False, f"Signup error: {error_data}")
+                except:
+                    self.log_test("Direct Supabase Signup", False, f"Signup failed with status: {response.status_code}")
             else:
-                self.log_test("JWT Token Structure", False, "JWT token has invalid structure")
+                self.log_test("Direct Supabase Signup", False, f"Unexpected signup response: {response.status_code}")
                 
         except Exception as e:
-            self.log_test("JWT Token Structure", False, f"JWT validation failed: {e}")
+            self.log_test("Direct Supabase Signup", False, f"Signup test failed: {e}")
+        
+        # Test 2: Test signin endpoint directly
+        try:
+            signin_payload = {
+                "email": "test@example.com",
+                "password": "wrongpassword"
+            }
+            
+            response = requests.post(
+                f"{supabase_url}/auth/v1/token?grant_type=password",
+                headers=headers,
+                json=signin_payload,
+                timeout=10
+            )
+            
+            if response.status_code == 400:
+                try:
+                    error_data = response.json()
+                    if "Invalid login credentials" in str(error_data):
+                        self.log_test("Direct Supabase Signin", True, "Supabase signin API working (invalid credentials)")
+                    elif "Invalid API key" in str(error_data):
+                        self.log_test("Direct Supabase Signin", False, "Invalid API key error in signin")
+                    else:
+                        self.log_test("Direct Supabase Signin", True, "Supabase signin API accessible")
+                except:
+                    self.log_test("Direct Supabase Signin", True, "Supabase signin API accessible")
+            else:
+                self.log_test("Direct Supabase Signin", False, f"Unexpected signin response: {response.status_code}")
+                
+        except Exception as e:
+            self.log_test("Direct Supabase Signin", False, f"Signin test failed: {e}")
+        
+        # Test 3: Test environment variable loading in Next.js
+        try:
+            # Check if the signup page loads the Supabase configuration correctly
+            response = requests.get(f"{self.base_url}/signup", timeout=10)
+            
+            if response.status_code == 200:
+                content = response.text
+                # Check if Supabase URL is present in the page
+                if "ntygisnllsawkuhuiuxc.supabase.co" in content:
+                    self.log_test("Environment Variables in Frontend", True, "Supabase URL loaded in frontend")
+                else:
+                    # Check if there are any JavaScript errors related to Supabase
+                    if "supabase" in content.lower():
+                        self.log_test("Environment Variables in Frontend", True, "Supabase configuration present")
+                    else:
+                        self.log_test("Environment Variables in Frontend", False, "Supabase configuration not found in frontend")
+            else:
+                self.log_test("Environment Variables in Frontend", False, f"Signup page not accessible: {response.status_code}")
+                
+        except Exception as e:
+            self.log_test("Environment Variables in Frontend", False, f"Frontend test failed: {e}")
+        
+        # Test 4: Test API key expiration
+        try:
+            import base64
+            import json
+            
+            anon_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50eWdpc25sbHNhd2t1aHVpdXhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE2OTMzMDYsImV4cCI6MjA2NzI2OTMwNn0.9f2af829b3d6599799d1cc9f44a59ea5"
+            
+            # Decode JWT payload
+            payload = anon_key.split('.')[1]
+            payload += '=' * (4 - len(payload) % 4)
+            decoded = base64.b64decode(payload)
+            token_data = json.loads(decoded)
+            
+            import time
+            current_time = int(time.time())
+            expiration_time = token_data.get('exp', 0)
+            
+            if expiration_time > current_time:
+                time_left = expiration_time - current_time
+                days_left = time_left // (24 * 3600)
+                self.log_test("API Key Expiration", True, f"API key valid for {days_left} more days")
+            else:
+                self.log_test("API Key Expiration", False, "API key has expired")
+                
+        except Exception as e:
+            self.log_test("API Key Expiration", False, f"Token validation failed: {e}")
+        
+        # Test 5: Test CORS and network connectivity
+        try:
+            # Test if Supabase is accessible from the server
+            response = requests.get(f"{supabase_url}/rest/v1/", timeout=10)
+            
+            if response.status_code in [200, 401, 403]:
+                self.log_test("Network Connectivity", True, "Supabase is accessible from server")
+            else:
+                self.log_test("Network Connectivity", False, f"Network issue: {response.status_code}")
+                
+        except Exception as e:
+            self.log_test("Network Connectivity", False, f"Network test failed: {e}")
+        
+        # Test 6: Test if user_profiles table is properly configured
+        try:
+            # Test if we can query the user_profiles table structure
+            response = requests.get(
+                f"{supabase_url}/rest/v1/user_profiles?select=*&limit=0",
+                headers=headers,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                self.log_test("Database Table Access", True, "user_profiles table is accessible")
+            elif response.status_code == 401:
+                self.log_test("Database Table Access", True, "user_profiles table exists (RLS protection active)")
+            elif response.status_code == 404:
+                self.log_test("Database Table Access", False, "user_profiles table not found")
+            else:
+                self.log_test("Database Table Access", False, f"Table access issue: {response.status_code}")
+                
+        except Exception as e:
+            self.log_test("Database Table Access", False, f"Database test failed: {e}")
 
     def test_stripe_configuration(self):
         """Test Stripe configuration and basic functionality"""
