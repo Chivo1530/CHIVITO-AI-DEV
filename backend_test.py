@@ -520,6 +520,12 @@ class ChivitoAPITester:
         self.test_lead_api()
         self.test_chat_api()
         self.test_workflows_api()
+        self.test_supabase_connection()
+        self.test_stripe_configuration()
+        self.test_ai_assistant_functionality()
+        self.test_premium_features_access()
+        self.test_lead_processing_intelligence()
+        self.test_api_error_handling()
         self.test_data_consistency()
         
         # Print summary
