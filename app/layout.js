@@ -1,4 +1,4 @@
-import './globals.css'
+import './global.css'
 
 export const metadata = {
   title: 'CHIVITO AI - AI Agent Empire',
