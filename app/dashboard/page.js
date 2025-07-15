@@ -40,7 +40,19 @@ export default function Dashboard() {
 
   useEffect(() => {
     setIsClient(true)
-    loadUserData()
+    
+    // Check for demo user (bypass Supabase for demo)
+    const demoUser = localStorage.getItem('demoUser')
+    if (demoUser) {
+      const userData = JSON.parse(demoUser)
+      setUser({ email: userData.email })
+      setProfile({
+        email: userData.email,
+        subscription_plan: userData.subscription_plan,
+        created_at: userData.created_at
+      })
+    }
+    
     initializeData()
     
     setCurrentTime(new Date())
