@@ -420,7 +420,7 @@ class ChivitoAPITester:
             if response.status_code == 200:
                 content = response.text
                 # Check if Supabase URL is present in the page
-                if "ntygisnllsawkuhuiuxc.supabase.co" in content:
+                if "mwaktovpihmhvyhoillk.supabase.co" in content:
                     self.log_test("Environment Variables in Frontend", True, "Supabase URL loaded in frontend")
                 else:
                     # Check if there are any JavaScript errors related to Supabase
