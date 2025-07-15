@@ -16,15 +16,17 @@ export default function PonchAIAssistant({ userProfile, businessData }) {
     const welcomeMessage = {
       id: 1,
       type: 'assistant',
-      content: `Hey! I'm Ponch, the 18-year-old founder behind CHIVITO AI. 🚀
+      content: `🧠 YO! I'm Ponch, 18 years old and the founder of CHIVITO AI! 
 
-I just got laid off from 3 jobs, but this is all I have right now - and I have a plan. 
+I just got laid off from 3 jobs, but honestly? This is EXACTLY what I needed. I'm building from zero with pure hunger and determination.
 
-I built Tahoe Essentials (my clothing brand) and dealt with inventory nightmares and marketing challenges. I get the struggle. That's why CHIVITO isn't just automation - it's your 24/7 personal business mentor.
+I've been through it all with Tahoe Essentials - my clothing brand where I dealt with inventory nightmares, supply chain chaos, and marketing challenges that kept me up at night. That experience taught me that most businesses are drowning in manual work.
 
-What's your biggest business challenge right now? Let's start playing ball! 💪`,
+That's why CHIVITO isn't just another automation tool - it's your Swiss Army knife for business domination. I'm here to give you REAL advice from someone who's been in the trenches.
+
+What's your biggest business challenge right now? Let's turn it into your competitive advantage! 🚀💰`,
       timestamp: new Date().toISOString(),
-      ponchInsight: "Personal introduction with real experience"
+      ponchInsight: "Personal introduction with real Tahoe Essentials experience"
     };
     setMessages([welcomeMessage]);
   }, []);
