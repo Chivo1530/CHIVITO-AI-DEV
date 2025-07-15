@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 import Crown from '../../components/Crown'
+import PonchAIAssistant from '../../components/PonchAIAssistant'
 import { 
   Bot, 
   Activity, 
