@@ -1,8 +1,10 @@
-'use client'
-import { useState, useEffect } from 'react'
-import { Bot, Activity, TrendingUp, Users, Zap, Clock, Target, AlertCircle, Send, Play, Pause, CheckCircle, MessageCircle, Brain, FileText, Settings } from 'lucide-react'
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
+import Crown from '../components/Crown'
+import { TrendingUp, Bot, Users, Zap, CheckCircle, ArrowRight, Sparkles, Target, Clock } from 'lucide-react'
 
-export default function ChivitoAI() {
+export default async function LandingPage() {
   const [activeTab, setActiveTab] = useState('dashboard')
   const [agents, setAgents] = useState([])
   const [leads, setLeads] = useState([])
