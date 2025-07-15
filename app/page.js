@@ -432,7 +432,7 @@ export default function ChivitoAI() {
                 <span className="text-sm text-green-400">SYSTEM ONLINE</span>
               </div>
               <div className="text-sm text-gray-400 font-mono">
-                {currentTime.toLocaleTimeString()}
+                {typeof window !== 'undefined' ? currentTime.toLocaleTimeString() : '...'}
               </div>
             </div>
           </div>
