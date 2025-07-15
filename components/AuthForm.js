@@ -33,26 +33,28 @@ export default function AuthForm({ mode = 'signin' }) {
         }, 1500)
         
       } else {
-        // Sign up mode - Allow instant signup without email confirmation
+        // Sign up mode - Create account and redirect immediately
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
             emailRedirectTo: `${window.location.origin}/auth/callback`,
-            data: {
-              email_confirm: false
-            }
           },
         })
         
         if (error) throw error
         
-        setMessage('✅ Account created! Redirecting to dashboard...')
-        
-        // Redirect to dashboard after successful sign up
-        setTimeout(() => {
-          router.push('/dashboard')
-        }, 1500)
+        // For demo purposes, we'll redirect immediately after signup
+        if (data.user) {
+          setMessage('✅ Account created! Redirecting to dashboard...')
+          
+          // Force redirect to dashboard for demo
+          setTimeout(() => {
+            window.location.href = '/dashboard'
+          }, 1500)
+        } else {
+          setMessage('✅ Check your email to confirm your account!')
+        }
       }
     } catch (error) {
       console.error('Auth error:', error)
