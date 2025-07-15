@@ -17,36 +17,69 @@ export default function AuthForm({ mode = 'signin' }) {
     setLoading(true)
     setMessage('')
 
-    // FOR DEMO PURPOSES - Skip actual authentication and redirect to dashboard
-    if (mode === 'signup') {
-      setMessage('✅ Demo Account Created! Redirecting to dashboard...')
-      setTimeout(() => {
-        // Store demo user in localStorage for demo purposes
-        localStorage.setItem('demoUser', JSON.stringify({
+    try {
+      if (mode === 'signup') {
+        // Real Supabase Sign Up
+        const { data, error } = await supabase.auth.signUp({
           email: email,
-          name: email.split('@')[0],
-          subscription_plan: 'free_trial',
-          created_at: new Date().toISOString()
-        }))
-        
-        window.location.href = '/dashboard'
-      }, 1500)
-    } else {
-      setMessage('✅ Demo Sign In! Redirecting to dashboard...')
-      setTimeout(() => {
-        // Store demo user in localStorage for demo purposes
-        localStorage.setItem('demoUser', JSON.stringify({
+          password: password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth/callback`
+          }
+        })
+
+        if (error) {
+          throw error
+        }
+
+        if (data.user) {
+          if (data.user.email_confirmed_at) {
+            // User is confirmed, redirect to dashboard
+            setMessage('✅ Account created successfully! Redirecting to dashboard...')
+            setTimeout(() => {
+              router.push('/dashboard')
+            }, 1500)
+          } else {
+            // User needs to confirm email
+            setMessage('✅ Account created! Please check your email to confirm your account.')
+          }
+        }
+      } else {
+        // Real Supabase Sign In
+        const { data, error } = await supabase.auth.signInWithPassword({
           email: email,
-          name: email.split('@')[0],
-          subscription_plan: 'professional',
-          created_at: new Date().toISOString()
-        }))
-        
-        window.location.href = '/dashboard'
-      }, 1500)
+          password: password
+        })
+
+        if (error) {
+          throw error
+        }
+
+        if (data.user) {
+          setMessage('✅ Sign in successful! Redirecting to dashboard...')
+          setTimeout(() => {
+            router.push('/dashboard')
+          }, 1500)
+        }
+      }
+    } catch (error) {
+      console.error('Authentication error:', error)
+      
+      // Handle specific error messages
+      if (error.message.includes('Invalid login credentials')) {
+        setMessage('❌ Invalid email or password. Please try again.')
+      } else if (error.message.includes('User already registered')) {
+        setMessage('❌ Account already exists. Please sign in instead.')
+      } else if (error.message.includes('Password should be at least 6 characters')) {
+        setMessage('❌ Password must be at least 6 characters long.')
+      } else if (error.message.includes('Unable to validate email address')) {
+        setMessage('❌ Please enter a valid email address.')
+      } else {
+        setMessage(`❌ Authentication failed: ${error.message}`)
+      }
+    } finally {
+      setLoading(false)
     }
-    
-    setLoading(false)
   }
 
   return (
