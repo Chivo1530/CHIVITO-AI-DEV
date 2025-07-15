@@ -2,6 +2,7 @@
 """
 CHIVITO AI Platform Backend API Testing Suite
 Tests all Next.js API routes for functionality and data consistency
+Includes Supabase authentication and Stripe integration testing
 """
 
 import requests
@@ -9,6 +10,7 @@ import json
 import sys
 from datetime import datetime
 import time
+import uuid
 
 class ChivitoAPITester:
     def __init__(self, base_url="http://localhost:3000"):
@@ -16,6 +18,7 @@ class ChivitoAPITester:
         self.tests_run = 0
         self.tests_passed = 0
         self.test_results = []
+        self.test_user_email = f"test_{uuid.uuid4().hex[:8]}@chivitoai.com"
 
     def log_test(self, name, success, details=""):
         """Log test result"""
