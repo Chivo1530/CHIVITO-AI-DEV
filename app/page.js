@@ -430,8 +430,8 @@ export default async function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      {/* Header */}
+    <div className="min-h-screen luxury-gradient">
+      {/* Navigation */}
       <header className="border-b border-gray-800 bg-gray-900/50">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
