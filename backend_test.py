@@ -439,7 +439,7 @@ class ChivitoAPITester:
             import base64
             import json
             
-            anon_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50eWdpc25sbHNhd2t1aHVpdXhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE2OTMzMDYsImV4cCI6MjA2NzI2OTMwNn0.9f2af829b3d6599799d1cc9f44a59ea5"
+            anon_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im13YWt0b3ZwaWhtaHZ5aG9pbGxrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI2MjAxMjksImV4cCI6MjA2ODE5NjEyOX0.lFgLWst_1QswoWI5BJRaCmJaGG_qWvXUTqW58Y4I0vc"
             
             # Decode JWT payload
             payload = anon_key.split('.')[1]
