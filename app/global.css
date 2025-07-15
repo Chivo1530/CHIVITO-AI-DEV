@@ -318,6 +318,53 @@ h1, h2, h3, h4, h5, h6 {
   background: #B91C3C;
 }
 
+/* Premium Animation Effects */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.8s ease-out;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-bounce-subtle {
+  animation: bounce 2s infinite;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .brand-title {
@@ -325,11 +372,18 @@ h1, h2, h3, h4, h5, h6 {
   }
   
   .premium-card {
-    margin: 8px;
+    margin: 16px;
+    padding: 20px;
   }
   
-  .metric-value {
-    font-size: 1.5rem;
+  .royal-button {
+    padding: 10px 20px;
+    font-size: 13px;
+  }
+  
+  .premium-button {
+    padding: 10px 20px;
+    font-size: 13px;
   }
 }
 
