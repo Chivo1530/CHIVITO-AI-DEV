@@ -17,51 +17,36 @@ export default function AuthForm({ mode = 'signin' }) {
     setLoading(true)
     setMessage('')
 
-    try {
-      if (mode === 'signin') {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        })
-        if (error) throw error
+    // FOR DEMO PURPOSES - Skip actual authentication and redirect to dashboard
+    if (mode === 'signup') {
+      setMessage('✅ Demo Account Created! Redirecting to dashboard...')
+      setTimeout(() => {
+        // Store demo user in localStorage for demo purposes
+        localStorage.setItem('demoUser', JSON.stringify({
+          email: email,
+          name: email.split('@')[0],
+          subscription_plan: 'free_trial',
+          created_at: new Date().toISOString()
+        }))
         
-        setMessage('✅ Welcome back to CHIVITO AI!')
+        window.location.href = '/dashboard'
+      }, 1500)
+    } else {
+      setMessage('✅ Demo Sign In! Redirecting to dashboard...')
+      setTimeout(() => {
+        // Store demo user in localStorage for demo purposes
+        localStorage.setItem('demoUser', JSON.stringify({
+          email: email,
+          name: email.split('@')[0],
+          subscription_plan: 'professional',
+          created_at: new Date().toISOString()
+        }))
         
-        // Redirect to dashboard after successful sign in
-        setTimeout(() => {
-          router.push('/dashboard')
-        }, 1500)
-        
-      } else {
-        // Sign up mode - Create account and redirect immediately
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback`,
-          },
-        })
-        
-        if (error) throw error
-        
-        // For demo purposes, we'll redirect immediately after signup
-        if (data.user) {
-          setMessage('✅ Account created! Redirecting to dashboard...')
-          
-          // Force redirect to dashboard for demo
-          setTimeout(() => {
-            window.location.href = '/dashboard'
-          }, 1500)
-        } else {
-          setMessage('✅ Check your email to confirm your account!')
-        }
-      }
-    } catch (error) {
-      console.error('Auth error:', error)
-      setMessage(`❌ ${error.message}`)
-    } finally {
-      setLoading(false)
+        window.location.href = '/dashboard'
+      }, 1500)
     }
+    
+    setLoading(false)
   }
 
   return (
