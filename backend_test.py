@@ -799,6 +799,7 @@ class ChivitoAPITester:
         
         # Run all tests
         self.test_supabase_authentication_system()  # Priority 1: Authentication testing
+        self.test_authentication_flow_simulation()  # Priority 1: Detailed auth flow testing
         self.test_agents_api()
         self.test_lead_api()
         self.test_chat_api()
