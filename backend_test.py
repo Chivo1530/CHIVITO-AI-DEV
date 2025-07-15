@@ -198,7 +198,7 @@ class ChivitoAPITester:
         # Test 1: Supabase Configuration and Environment Variables
         try:
             # Test if Supabase URL is accessible
-            supabase_url = "https://ntygisnllsawkuhuiuxc.supabase.co"
+            supabase_url = "https://mwaktovpihmhvyhoillk.supabase.co"
             response = requests.get(f"{supabase_url}/rest/v1/", timeout=10)
             
             if response.status_code in [200, 401, 403]:  # Valid responses from Supabase
