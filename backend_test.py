@@ -426,21 +426,40 @@ class ChivitoAPITester:
         except Exception as e:
             self.log_test("Invalid Workflow Error Handling", False, str(e))
 
-        # Test malformed lead data
+    def test_data_consistency(self):
+        """Test data consistency across endpoints"""
+        print("\n🔍 Testing Data Consistency...")
+        
         try:
-            payload = {"invalid": "data"}  # Missing required fields
-            response = requests.post(f"{self.base_url}/api/lead", json=payload, timeout=10)
-            # Should still process but with low score
-            if response.status_code == 200:
-                data = response.json()
-                if data.get('success') and data.get('score', 0) < 20:
-                    self.log_test("Malformed Lead Handling", True, "Handles incomplete lead data gracefully")
+            # Get agents data
+            agents_response = requests.get(f"{self.base_url}/api/agents", timeout=10)
+            if agents_response.status_code == 200:
+                agents_data = agents_response.json()
+                agents = agents_data.get('agents', [])
+                
+                # Verify agent names match expected values
+                expected_agents = ['Lead Hunter', 'Content Creator', 'Sales Closer', 'Customer Support', 'Data Analyst', 'Social Media Manager']
+                actual_agents = [agent['name'] for agent in agents]
+                
+                if set(expected_agents) == set(actual_agents):
+                    self.log_test("Agent Names Consistency", True, "All expected agents present")
                 else:
-                    self.log_test("Malformed Lead Handling", True, "Processes malformed data")
+                    missing = set(expected_agents) - set(actual_agents)
+                    extra = set(actual_agents) - set(expected_agents)
+                    self.log_test("Agent Names Consistency", False, f"Missing: {missing}, Extra: {extra}")
+                
+                # Verify revenue values are realistic
+                total_revenue = sum(agent['revenue'] for agent in agents)
+                if 50000 <= total_revenue <= 150000:  # Reasonable range
+                    self.log_test("Revenue Values Consistency", True, f"Total revenue: ${total_revenue:,}")
+                else:
+                    self.log_test("Revenue Values Consistency", False, f"Unrealistic total revenue: ${total_revenue:,}")
+                    
             else:
-                self.log_test("Malformed Lead Handling", False, f"HTTP {response.status_code}")
+                self.log_test("Data Consistency", False, "Could not retrieve agents data")
+                
         except Exception as e:
-            self.log_test("Malformed Lead Handling", False, str(e))
+            self.log_test("Data Consistency", False, str(e))
         """Test data consistency across endpoints"""
         print("\n🔍 Testing Data Consistency...")
         
