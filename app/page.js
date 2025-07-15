@@ -15,10 +15,31 @@ export default async function LandingPage() {
   if (session) {
     redirect('/dashboard')
   }
-  const [workflowTemplates, setWorkflowTemplates] = useState([])
-  const [activeWorkflows, setActiveWorkflows] = useState([])
-  const [taskHistory, setTaskHistory] = useState([])
-  const [notifications, setNotifications] = useState([])
+
+  // Mock data for the landing page (no useState needed in server component)
+  const workflowTemplates = [
+    { id: 1, name: "Lead Generation", description: "Automated lead discovery and qualification" },
+    { id: 2, name: "Content Creation", description: "AI-powered content generation and scheduling" },
+    { id: 3, name: "Customer Support", description: "24/7 automated customer service" }
+  ]
+
+  const activeWorkflows = [
+    { id: 1, name: "Lead Hunter", status: "active", progress: 85 },
+    { id: 2, name: "Content Creator", status: "active", progress: 92 },
+    { id: 3, name: "Sales Closer", status: "active", progress: 78 }
+  ]
+
+  const taskHistory = [
+    { id: 1, task: "Generated 15 qualified leads", timestamp: "2 hours ago" },
+    { id: 2, task: "Created 5 social media posts", timestamp: "4 hours ago" },
+    { id: 3, task: "Responded to 12 customer inquiries", timestamp: "6 hours ago" }
+  ]
+
+  const notifications = [
+    { id: 1, type: "success", message: "Lead Hunter found 3 high-value prospects", time: "1 hour ago" },
+    { id: 2, type: "info", message: "Content Creator published new blog post", time: "3 hours ago" },
+    { id: 3, type: "warning", message: "Sales Closer needs attention on deal #1247", time: "5 hours ago" }
+  ]
   const [chatHistory, setChatHistory] = useState([])
   const [chatMessage, setChatMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
