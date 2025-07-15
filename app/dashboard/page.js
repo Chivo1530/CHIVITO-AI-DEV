@@ -196,8 +196,9 @@ export default function Dashboard() {
   }
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut()
-    router.push('/signin')
+    // For demo - just clear localStorage and redirect
+    localStorage.removeItem('demoUser')
+    window.location.href = '/'
   }
 
   const getStatusColor = (status) => {
