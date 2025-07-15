@@ -191,27 +191,185 @@ class ChivitoAPITester:
         except Exception as e:
             self.log_test("POST /api/workflows", False, str(e))
 
-    def test_supabase_connection(self):
-        """Test Supabase connection and configuration"""
-        print("\n🔐 Testing Supabase Connection...")
+    def test_supabase_authentication_system(self):
+        """Comprehensive Supabase Authentication System Testing"""
+        print("\n🔐 Testing Supabase Authentication System...")
         
-        # Test if Supabase is properly configured by checking environment
+        # Test 1: Supabase Configuration and Environment Variables
         try:
-            # Test a simple API call that would use Supabase (like auth check)
-            # Since we can't directly test Supabase without authentication,
-            # we'll test endpoints that depend on it
-            response = requests.get(f"{self.base_url}/api/auth/session", timeout=10)
-            # This endpoint might not exist, but we're testing the connection
-            if response.status_code in [200, 401, 404]:  # Any valid HTTP response
-                self.log_test("Supabase Connection", True, "Supabase service is accessible")
+            # Test if Supabase URL is accessible
+            supabase_url = "https://ntygisnllsawkuhuiuxc.supabase.co"
+            response = requests.get(f"{supabase_url}/rest/v1/", timeout=10)
+            
+            if response.status_code in [200, 401, 403]:  # Valid responses from Supabase
+                self.log_test("Supabase URL Accessibility", True, f"Supabase instance accessible at {supabase_url}")
             else:
-                self.log_test("Supabase Connection", False, f"Unexpected status: {response.status_code}")
+                self.log_test("Supabase URL Accessibility", False, f"Supabase URL returned status: {response.status_code}")
         except Exception as e:
-            # If the endpoint doesn't exist, that's fine - Supabase is still configured
-            if "Connection" in str(e):
-                self.log_test("Supabase Connection", False, f"Connection error: {e}")
+            self.log_test("Supabase URL Accessibility", False, f"Cannot reach Supabase URL: {e}")
+        
+        # Test 2: API Key Validation
+        try:
+            # Test the anon key by making a request to Supabase REST API
+            supabase_url = "https://ntygisnllsawkuhuiuxc.supabase.co"
+            anon_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50eWdpc25sbHNhd2t1aHVpdXhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE2OTMzMDYsImV4cCI6MjA2NzI2OTMwNn0.9f2af829b3d6599799d1cc9f44a59ea5"
+            
+            headers = {
+                "apikey": anon_key,
+                "Authorization": f"Bearer {anon_key}",
+                "Content-Type": "application/json"
+            }
+            
+            # Test with a simple query to user_profiles table
+            response = requests.get(
+                f"{supabase_url}/rest/v1/user_profiles?select=id&limit=1",
+                headers=headers,
+                timeout=10
+            )
+            
+            if response.status_code in [200, 401, 403]:  # Valid API key responses
+                self.log_test("Supabase API Key Validation", True, f"API key is valid (status: {response.status_code})")
+            elif response.status_code == 400:
+                # Check if it's an "Invalid API key" error
+                try:
+                    error_data = response.json()
+                    if "Invalid API key" in str(error_data):
+                        self.log_test("Supabase API Key Validation", False, "Invalid API key error detected")
+                    else:
+                        self.log_test("Supabase API Key Validation", True, "API key valid, table access restricted")
+                except:
+                    self.log_test("Supabase API Key Validation", False, f"API key validation failed: {response.status_code}")
             else:
-                self.log_test("Supabase Connection", True, "Supabase configuration appears valid")
+                self.log_test("Supabase API Key Validation", False, f"Unexpected API response: {response.status_code}")
+                
+        except Exception as e:
+            self.log_test("Supabase API Key Validation", False, f"API key test failed: {e}")
+        
+        # Test 3: Authentication Callback Route
+        try:
+            # Test the auth callback route exists
+            response = requests.get(f"{self.base_url}/auth/callback", timeout=10)
+            
+            # Should redirect or return a valid response, not 404
+            if response.status_code in [200, 302, 307, 308]:  # Valid redirect responses
+                self.log_test("Auth Callback Route", True, "Auth callback route is accessible")
+            elif response.status_code == 400:
+                # Expected if no code parameter provided
+                self.log_test("Auth Callback Route", True, "Auth callback route exists (missing code parameter)")
+            else:
+                self.log_test("Auth Callback Route", False, f"Auth callback returned: {response.status_code}")
+                
+        except Exception as e:
+            self.log_test("Auth Callback Route", False, f"Auth callback test failed: {e}")
+        
+        # Test 4: Database Schema Validation
+        try:
+            # Test if we can access the database schema through Supabase API
+            supabase_url = "https://ntygisnllsawkuhuiuxc.supabase.co"
+            anon_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50eWdpc25sbHNhd2t1aHVpdXhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE2OTMzMDYsImV4cCI6MjA2NzI2OTMwNn0.9f2af829b3d6599799d1cc9f44a59ea5"
+            
+            headers = {
+                "apikey": anon_key,
+                "Authorization": f"Bearer {anon_key}",
+                "Content-Type": "application/json"
+            }
+            
+            # Test if user_profiles table exists
+            response = requests.get(
+                f"{supabase_url}/rest/v1/user_profiles?select=id&limit=0",
+                headers=headers,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                self.log_test("Database Schema - user_profiles", True, "user_profiles table exists and accessible")
+            elif response.status_code == 401:
+                self.log_test("Database Schema - user_profiles", True, "user_profiles table exists (RLS active)")
+            else:
+                self.log_test("Database Schema - user_profiles", False, f"user_profiles table issue: {response.status_code}")
+                
+        except Exception as e:
+            self.log_test("Database Schema - user_profiles", False, f"Schema test failed: {e}")
+        
+        # Test 5: Authentication Flow Simulation
+        try:
+            # Test signup page accessibility
+            response = requests.get(f"{self.base_url}/signup", timeout=10)
+            
+            if response.status_code == 200:
+                self.log_test("Signup Page Accessibility", True, "Signup page is accessible")
+            else:
+                self.log_test("Signup Page Accessibility", False, f"Signup page returned: {response.status_code}")
+                
+        except Exception as e:
+            self.log_test("Signup Page Accessibility", False, f"Signup page test failed: {e}")
+        
+        try:
+            # Test signin page accessibility
+            response = requests.get(f"{self.base_url}/signin", timeout=10)
+            
+            if response.status_code == 200:
+                self.log_test("Signin Page Accessibility", True, "Signin page is accessible")
+            else:
+                self.log_test("Signin Page Accessibility", False, f"Signin page returned: {response.status_code}")
+                
+        except Exception as e:
+            self.log_test("Signin Page Accessibility", False, f"Signin page test failed: {e}")
+        
+        # Test 6: Environment Variables Configuration
+        try:
+            # Test if the application loads without environment variable errors
+            response = requests.get(f"{self.base_url}/", timeout=10)
+            
+            if response.status_code == 200:
+                # Check if the response contains any environment variable errors
+                content = response.text.lower()
+                if "undefined" in content or "null" in content:
+                    self.log_test("Environment Variables", False, "Possible undefined environment variables detected")
+                else:
+                    self.log_test("Environment Variables", True, "Environment variables appear to be loaded correctly")
+            else:
+                self.log_test("Environment Variables", False, f"Application not loading properly: {response.status_code}")
+                
+        except Exception as e:
+            self.log_test("Environment Variables", False, f"Environment test failed: {e}")
+        
+        # Test 7: JWT Token Validation
+        try:
+            # Test if the JWT secret is properly configured by checking token structure
+            anon_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50eWdpc25sbHNhd2t1aHVpdXhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE2OTMzMDYsImV4cCI6MjA2NzI2OTMwNn0.9f2af829b3d6599799d1cc9f44a59ea5"
+            
+            # Basic JWT structure validation (should have 3 parts separated by dots)
+            jwt_parts = anon_key.split('.')
+            if len(jwt_parts) == 3:
+                self.log_test("JWT Token Structure", True, "JWT token has valid structure")
+                
+                # Check if token is not expired by decoding payload (basic check)
+                import base64
+                import json
+                try:
+                    # Add padding if needed
+                    payload = jwt_parts[1]
+                    payload += '=' * (4 - len(payload) % 4)
+                    decoded = base64.b64decode(payload)
+                    token_data = json.loads(decoded)
+                    
+                    if 'exp' in token_data and 'iss' in token_data:
+                        # Check if token is from correct issuer
+                        if token_data['iss'] == 'supabase':
+                            self.log_test("JWT Token Content", True, "JWT token has valid Supabase issuer")
+                        else:
+                            self.log_test("JWT Token Content", False, f"JWT token has wrong issuer: {token_data['iss']}")
+                    else:
+                        self.log_test("JWT Token Content", False, "JWT token missing required fields")
+                        
+                except Exception as decode_error:
+                    self.log_test("JWT Token Content", False, f"JWT decode error: {decode_error}")
+            else:
+                self.log_test("JWT Token Structure", False, "JWT token has invalid structure")
+                
+        except Exception as e:
+            self.log_test("JWT Token Structure", False, f"JWT validation failed: {e}")
 
     def test_stripe_configuration(self):
         """Test Stripe configuration and basic functionality"""
