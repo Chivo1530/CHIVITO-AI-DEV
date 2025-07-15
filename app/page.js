@@ -5,12 +5,16 @@ import Crown from '../components/Crown'
 import { TrendingUp, Bot, Users, Zap, CheckCircle, ArrowRight, Sparkles, Target, Clock } from 'lucide-react'
 
 export default async function LandingPage() {
-  const [activeTab, setActiveTab] = useState('dashboard')
-  const [agents, setAgents] = useState([])
-  const [leads, setLeads] = useState([])
-  const [metrics, setMetrics] = useState({})
-  const [currentTime, setCurrentTime] = useState(null)
-  const [isClient, setIsClient] = useState(false)
+  const cookieStore = cookies()
+  const supabase = createServerComponentClient({ cookies: () => cookieStore })
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+
+  if (session) {
+    redirect('/dashboard')
+  }
   const [workflowTemplates, setWorkflowTemplates] = useState([])
   const [activeWorkflows, setActiveWorkflows] = useState([])
   const [taskHistory, setTaskHistory] = useState([])
