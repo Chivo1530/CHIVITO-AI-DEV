@@ -433,7 +433,7 @@ export default function ChivitoAI() {
                 <span className="text-sm text-green-400">SYSTEM ONLINE</span>
               </div>
               <div className="text-sm text-gray-400 font-mono">
-                {typeof window !== 'undefined' ? currentTime.toLocaleTimeString() : '...'}
+                {isClient && currentTime ? currentTime.toLocaleTimeString() : '...'}
               </div>
             </div>
           </div>
