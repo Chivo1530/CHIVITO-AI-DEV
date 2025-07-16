@@ -19,6 +19,7 @@ class ChivitoAPITester:
         self.tests_passed = 0
         self.test_results = []
         self.test_user_email = f"test_{uuid.uuid4().hex[:8]}@chivitoai.com"
+        self.admin_token = None
 
     def log_test(self, name, success, details=""):
         """Log test result"""
