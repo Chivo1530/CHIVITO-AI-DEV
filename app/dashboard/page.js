@@ -526,6 +526,12 @@ export default function Dashboard() {
           </div>
         )}
 
+        {activeTab === 'email-campaigns' && (
+          <div className="space-y-8 animate-fade-in">
+            <LiveEmailCampaign />
+          </div>
+        )}
+
         {activeTab === 'assistant' && (
           <div className="space-y-8 animate-fade-in">
             {/* Ponch AI Assistant */}
