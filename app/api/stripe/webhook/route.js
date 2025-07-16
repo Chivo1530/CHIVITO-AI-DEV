@@ -56,12 +56,19 @@ async function handleSubscriptionChange(subscription) {
 
   // Determine plan based on subscription items
   let planId = 'free_trial'
+  let planName = 'Free Trial'
+  let monthlyRevenue = 0
+  
   if (subscription.items.data.length > 0) {
     const priceId = subscription.items.data[0].price.id
     if (priceId === process.env.STRIPE_PROFESSIONAL_PRICE_ID) {
       planId = 'professional'
+      planName = 'Professional'
+      monthlyRevenue = 297
     } else if (priceId === process.env.STRIPE_ENTERPRISE_PRICE_ID) {
       planId = 'enterprise'
+      planName = 'Enterprise'
+      monthlyRevenue = 697
     }
   }
 
@@ -79,12 +86,43 @@ async function handleSubscriptionChange(subscription) {
 
   if (error) {
     console.error('Error updating subscription:', error)
+    // Send alert to monitoring system
+    await sendMonitoringAlert({
+      type: 'subscription_update_failed',
+      message: `Failed to update subscription for customer ${customerId}`,
+      error: error.message,
+      customerId,
+      subscriptionId
+    })
+  } else {
+    // Success! Send celebration alert
+    await sendMonitoringAlert({
+      type: 'subscription_updated',
+      message: `💰 Customer upgraded to ${planName} plan! +$${monthlyRevenue}/month`,
+      customerId,
+      subscriptionId,
+      planName,
+      monthlyRevenue,
+      severity: 'success'
+    })
+    
+    console.log(`🎉 Subscription updated: Customer ${customerId} → ${planName} plan`)
   }
 }
 
 async function handleSubscriptionCancellation(subscription) {
   const customerId = subscription.customer
   const canceledAt = new Date(subscription.canceled_at * 1000)
+
+  // Get customer info before cancellation
+  const { data: customer } = await supabaseAdmin
+    .from('user_profiles')
+    .select('email, subscription_plan')
+    .eq('stripe_customer_id', customerId)
+    .single()
+
+  const lostRevenue = customer?.subscription_plan === 'professional' ? 297 : 
+                     customer?.subscription_plan === 'enterprise' ? 697 : 0
 
   // Update user profile to downgrade to free trial
   const { error } = await supabaseAdmin
@@ -99,6 +137,18 @@ async function handleSubscriptionCancellation(subscription) {
 
   if (error) {
     console.error('Error handling subscription cancellation:', error)
+  } else {
+    // Send churn alert
+    await sendMonitoringAlert({
+      type: 'subscription_canceled',
+      message: `📉 Customer canceled subscription: -$${lostRevenue}/month`,
+      customerId,
+      customerEmail: customer?.email,
+      lostRevenue,
+      severity: 'warning'
+    })
+    
+    console.log(`📉 Subscription canceled: Customer ${customerId} (${customer?.email})`)
   }
 }
 
@@ -121,12 +171,22 @@ async function handlePaymentSuccess(invoice) {
 
   if (error) {
     console.error('Error updating payment success:', error)
+  } else {
+    // Send revenue alert
+    await sendMonitoringAlert({
+      type: 'payment_success',
+      message: `💰 Payment received: $${amountPaid / 100} from customer ${customerId}`,
+      customerId,
+      amount: amountPaid / 100,
+      severity: 'success'
+    })
   }
 }
 
 async function handlePaymentFailure(invoice) {
   const customerId = invoice.customer
   const subscriptionId = invoice.subscription
+  const amountFailed = invoice.amount_due
 
   // Log failed payment
   console.log(`Payment failed for customer ${customerId}`)
@@ -142,5 +202,30 @@ async function handlePaymentFailure(invoice) {
 
   if (error) {
     console.error('Error updating payment failure:', error)
+  } else {
+    // Send payment failure alert
+    await sendMonitoringAlert({
+      type: 'payment_failed',
+      message: `❌ Payment failed: $${amountFailed / 100} from customer ${customerId}`,
+      customerId,
+      amount: amountFailed / 100,
+      severity: 'error'
+    })
+  }
+}
+
+async function sendMonitoringAlert(alertData) {
+  try {
+    // Send to monitoring system
+    await fetch('/api/monitoring', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'send_alert',
+        data: alertData
+      })
+    })
+  } catch (error) {
+    console.error('Failed to send monitoring alert:', error)
   }
 }
