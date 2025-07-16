@@ -77,7 +77,7 @@ export async function POST(request) {
 async function getAffiliateStats(userId) {
   try {
     // Get affiliate data
-    const { data: affiliate, error: affiliateError } = await supabase
+    let { data: affiliate, error: affiliateError } = await supabase
       .from('affiliates')
       .select('*')
       .eq('user_id', userId)
