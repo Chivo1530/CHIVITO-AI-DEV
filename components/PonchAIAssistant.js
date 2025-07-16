@@ -11,22 +11,20 @@ export default function PonchAIAssistant({ userProfile, businessData }) {
   const [isTyping, setIsTyping] = useState(false);
   const [businessContext] = useState(new BusinessContextEngine());
 
-  // Initialize with Ponch's personal greeting
+  // Initialize with P$'s personal greeting
   useEffect(() => {
     const welcomeMessage = {
       id: 1,
       type: 'assistant',
-      content: `🧠 YO! I'm Ponch, 18 years old and the founder of CHIVITO AI! 
+      content: `💰 YO! I'm P$, your 18-year-old business mentor! 
 
-I just got laid off from 3 jobs, but honestly? This is EXACTLY what I needed. I'm building from zero with pure hunger and determination.
+Just got fired from 3 jobs but honestly? BEST thing that happened to me. Now I'm 100% focused on building empires.
 
-I've been through it all with Tahoe Essentials - my clothing brand where I dealt with inventory nightmares, supply chain chaos, and marketing challenges that kept me up at night. That experience taught me that most businesses are drowning in manual work.
+I scaled Tahoe Essentials from zero and learned every painful lesson about inventory, marketing, and operations. That's why I built CHIVITO - to automate all the stuff that kept me up at night.
 
-That's why CHIVITO isn't just another automation tool - it's your Swiss Army knife for business domination. I'm here to give you REAL advice from someone who's been in the trenches.
-
-What's your biggest business challenge right now? Let's turn it into your competitive advantage! 🚀💰`,
+What's your biggest business challenge right now? Let's turn it into profit! 🚀`,
       timestamp: new Date().toISOString(),
-      ponchInsight: "Personal introduction with real Tahoe Essentials experience"
+      ponchInsight: "Personal intro with real business experience"
     };
     setMessages([welcomeMessage]);
   }, []);
