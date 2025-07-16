@@ -725,7 +725,7 @@ export default function Dashboard() {
           </div>
         )}
 
-        {activeTab === 'lead-empire' && (
+        {activeTab === 'leads' && (
           <div className="space-y-8 animate-fade-in">
             {/* Lead Pipeline Section */}
             <div className="premium-card p-8">
