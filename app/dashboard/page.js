@@ -4,6 +4,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 import Crown from '../../components/Crown'
 import PonchAIAssistant from '../../components/PonchAIAssistant'
+import LiveEmailCampaign from '../../components/LiveEmailCampaign'
 import { 
   Bot, 
   Activity, 
@@ -21,7 +22,8 @@ import {
   ArrowUpRight,
   Play,
   Pause,
-  CheckCircle
+  CheckCircle,
+  Mail
 } from 'lucide-react'
 
 export default function Dashboard() {
