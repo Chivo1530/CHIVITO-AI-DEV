@@ -292,14 +292,15 @@ What makes you different from your competitors? 🎯`,
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
           onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-          placeholder="Ask Ponch anything about your business..."
-          className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-royal-red"
+          placeholder="Ask P$ anything about your business..."
+          className="flex-1 bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-900 placeholder-gray-500 focus:outline-none focus:border-royal-red focus:ring-1 focus:ring-royal-red"
         />
         <button
           onClick={handleSendMessage}
-          className="bg-royal-red hover:bg-red-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+          disabled={!inputMessage.trim() || isTyping}
+          className="bg-royal-red hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
         >
-          <Zap className="w-4 h-4" />
+          <Zap size={16} />
           Send
         </button>
       </div>
