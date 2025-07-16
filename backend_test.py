@@ -981,9 +981,10 @@ class ChivitoAPITester:
         """Test /api/usage-limits endpoint"""
         print("\n📈 Testing Usage Limits API...")
         
+        # Test with valid action parameter
         try:
-            response = requests.get(f"{self.base_url}/api/usage-limits", timeout=10)
-            if response.status_code in [200, 401, 500]:  # Various expected responses
+            response = requests.get(f"{self.base_url}/api/usage-limits?action=all_usage", timeout=10)
+            if response.status_code in [200, 500]:  # Various expected responses
                 self.log_test("GET /api/usage-limits", True, "Usage limits endpoint accessible")
             else:
                 self.log_test("GET /api/usage-limits", False, f"HTTP {response.status_code}")
