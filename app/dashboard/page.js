@@ -54,14 +54,13 @@ export default function Dashboard() {
       setCurrentTime(new Date())
     }, 1000)
 
-    // Force clear loading state after 3 seconds as fallback
-    const fallbackTimer = setTimeout(() => {
+    // For preview environment, immediately set loading to false
+    if (process.env.NODE_ENV === 'development') {
       setLoading(false)
-    }, 3000)
+    }
 
     return () => {
       clearInterval(timeInterval)
-      clearTimeout(fallbackTimer)
     }
   }, [])
 
