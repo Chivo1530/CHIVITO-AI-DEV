@@ -638,6 +638,208 @@ export default function Dashboard() {
           </div>
         )}
 
+        {activeTab === 'agents' && (
+          <div className="space-y-8 animate-fade-in">
+            {/* AI Agents Section */}
+            <div className="premium-card p-8">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-gray-900">🤖 Premium AI Agents</h2>
+                <button className="royal-button">
+                  <Sparkles size={16} className="mr-2" />
+                  Deploy New Agent
+                </button>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {agents.map(agent => (
+                  <div key={agent.id} className="bg-gradient-to-br from-white to-gray-50 rounded-xl p-6 border border-gray-200 hover:border-royal-200 transition-all">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center space-x-3">
+                        <span className="text-3xl">{agent.icon}</span>
+                        <div>
+                          <h3 className="font-bold text-gray-900">{agent.name}</h3>
+                          <div className="flex items-center space-x-2">
+                            <div className={`w-2 h-2 rounded-full ${getStatusColor(agent.status)}`}></div>
+                            <span className="text-sm text-gray-600 capitalize">{agent.status}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm text-gray-500">Revenue</div>
+                        <div className="text-lg font-bold text-royal-600">${agent.revenue.toLocaleString()}</div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <div>
+                        <div className="text-sm text-gray-500 mb-1">Current Task</div>
+                        <div className="text-sm font-medium">{agent.currentTask}</div>
+                      </div>
+
+                      <div>
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-sm text-gray-500">Progress</span>
+                          <span className="text-sm font-medium text-royal-600">{agent.progress}%</span>
+                        </div>
+                        <div className="progress-bar">
+                          <div 
+                            className="progress-fill"
+                            style={{ width: `${agent.progress}%` }}
+                          ></div>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <div className="text-gray-500">Tasks</div>
+                          <div className="font-medium">{agent.tasksCompleted}</div>
+                        </div>
+                        <div>
+                          <div className="text-gray-500">Success</div>
+                          <div className="font-medium">{agent.successRate}%</div>
+                        </div>
+                      </div>
+
+                      <div className="flex space-x-2 pt-2">
+                        <button className="royal-button flex-1 text-sm">
+                          <Play size={14} className="mr-1" />
+                          Optimize
+                        </button>
+                        <button className="premium-button flex-1 text-sm">
+                          <Settings size={14} className="mr-1" />
+                          Config
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'lead-empire' && (
+          <div className="space-y-8 animate-fade-in">
+            {/* Lead Pipeline Section */}
+            <div className="premium-card p-8">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-gray-900">💼 High-Value Lead Pipeline</h2>
+                <button className="royal-button">
+                  <Target size={16} className="mr-2" />
+                  Generate Leads
+                </button>
+              </div>
+              
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-gray-200">
+                      <th className="text-left p-4 text-sm font-medium text-gray-700">Contact</th>
+                      <th className="text-left p-4 text-sm font-medium text-gray-700">Company</th>
+                      <th className="text-left p-4 text-sm font-medium text-gray-700">Status</th>
+                      <th className="text-left p-4 text-sm font-medium text-gray-700">Score</th>
+                      <th className="text-left p-4 text-sm font-medium text-gray-700">Stage</th>
+                      <th className="text-left p-4 text-sm font-medium text-gray-700">Value</th>
+                      <th className="text-left p-4 text-sm font-medium text-gray-700">Next Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {leads.map(lead => (
+                      <tr key={lead.id} className="border-b border-gray-100 hover:bg-gray-50">
+                        <td className="p-4">
+                          <div>
+                            <div className="font-medium text-gray-900">{lead.name}</div>
+                            <div className="text-sm text-gray-600">{lead.email}</div>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <div>
+                            <div className="font-medium text-gray-900">{lead.company}</div>
+                            <div className="text-sm text-gray-600">{lead.position}</div>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getLeadStatusColor(lead.status)} text-white`}>
+                            {lead.status.toUpperCase()}
+                          </span>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex items-center space-x-2">
+                            <div className="text-lg font-bold text-gray-900">{lead.score}</div>
+                            <div className="w-12 h-2 bg-gray-200 rounded-full overflow-hidden">
+                              <div 
+                                className="h-full bg-royal-600 rounded-full"
+                                style={{ width: `${lead.score}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <span className="text-sm font-medium text-gray-900">{lead.stage}</span>
+                        </td>
+                        <td className="p-4">
+                          <span className="text-lg font-bold text-green-600">${lead.value.toLocaleString()}</span>
+                        </td>
+                        <td className="p-4">
+                          <div className="text-sm font-medium text-gray-900">{lead.nextAction}</div>
+                          <div className="text-xs text-gray-500">{lead.lastTouch}</div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'workflows' && (
+          <div className="space-y-8 animate-fade-in">
+            <div className="premium-card p-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">⚡ Workflow Automation</h2>
+              <p className="text-gray-600 mb-6">Automate your business processes with intelligent workflows</p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
+                  <h3 className="text-lg font-bold text-blue-900 mb-2">Lead Scoring Automation</h3>
+                  <p className="text-sm text-blue-700 mb-4">Automatically score and prioritize leads based on engagement</p>
+                  <button className="royal-button w-full">Configure Workflow</button>
+                </div>
+                
+                <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-200">
+                  <h3 className="text-lg font-bold text-green-900 mb-2">Email Sequence Automation</h3>
+                  <p className="text-sm text-green-700 mb-4">Nurture leads with personalized email sequences</p>
+                  <button className="royal-button w-full">Configure Workflow</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'analytics' && (
+          <div className="space-y-8 animate-fade-in">
+            <div className="premium-card p-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">📊 Business Intelligence</h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="p-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-200">
+                  <h3 className="text-lg font-bold text-purple-900 mb-2">Revenue Analytics</h3>
+                  <p className="text-sm text-purple-700 mb-4">Track revenue performance and growth metrics</p>
+                  <div className="text-3xl font-bold text-purple-600 mb-2">$247,800</div>
+                  <div className="text-sm text-purple-600">+47% growth this month</div>
+                </div>
+                
+                <div className="p-6 bg-gradient-to-br from-orange-50 to-red-50 rounded-xl border border-orange-200">
+                  <h3 className="text-lg font-bold text-orange-900 mb-2">Conversion Analytics</h3>
+                  <p className="text-sm text-orange-700 mb-4">Monitor conversion rates and optimization opportunities</p>
+                  <div className="text-3xl font-bold text-orange-600 mb-2">23.4%</div>
+                  <div className="text-sm text-orange-600">Lead to customer conversion</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {activeTab === 'billing' && (
           <div className="space-y-8 animate-fade-in">
             <div className="premium-card p-8">
