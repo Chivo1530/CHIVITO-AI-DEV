@@ -141,22 +141,61 @@ What results are you looking for? Let's start there! 🎯`,
       };
     }
 
-    // General business questions
-    return {
-      content: `I get it - running a business is tough. I'm 18 and just got laid off from 3 jobs, but this is all I have right now. 🔥
+    // General business questions with varied responses
+    const businessTopics = [
+      {
+        keywords: ['help', 'start', 'beginning', 'new'],
+        response: `Listen, I started with $200 and a dream. Here's the game plan:
 
-Here's what I've learned building Tahoe Essentials and now CHIVITO:
-• Systems beat people for repetitive tasks
-• Automation gives you time for what matters
-• Real results trump fancy features
-• 24/7 execution beats 9-5 thinking
+1. Pick ONE problem you can solve better than anyone
+2. Find 10 people who'll pay you to solve it
+3. Automate the boring stuff (that's where CHIVITO comes in)
+4. Scale without losing your mind
 
-CHIVITO isn't just another tool - it's your Swiss Army knife for online business. We don't just automate, we execute your entire operation.
+What industry are you in? Let's build your automation strategy! 💪`,
+        insight: "Practical startup advice from real experience"
+      },
+      {
+        keywords: ['money', 'revenue', 'profit', 'income'],
+        response: `Real talk - money follows value, not the other way around.
 
-What's your biggest time-waster right now? Let's eliminate it! ⚡`,
-      insight: "General business philosophy and approach",
-      businessAdvice: "Focus on execution over features"
-    };
+I learned this scaling Tahoe Essentials. You can't just throw money at problems. You need systems that work while you sleep.
+
+Current revenue breakdown I see working:
+• Month 1-3: Nail your core process
+• Month 4-6: Automate everything possible  
+• Month 7-12: Scale what's working
+
+What's your current monthly revenue? Let's 2x it! 🚀`,
+        insight: "Revenue scaling methodology from clothing brand"
+      },
+      {
+        keywords: ['competition', 'competitors', 'market'],
+        response: `Competition? I LOVE competition! It validates your market.
+
+When I launched Tahoe Essentials, everyone said "clothing is saturated." But I found my angle - premium outdoor gear for young entrepreneurs.
+
+Your competitive advantage isn't your product. It's your EXECUTION speed.
+
+While they're debating, you're shipping. While they're planning, you're automating.
+
+What makes you different from your competitors? 🎯`,
+        insight: "Competitive positioning from real market experience"
+      }
+    ];
+
+    // Find matching response or use default
+    const matchedTopic = businessTopics.find(topic => 
+      topic.keywords.some(keyword => lowerMessage.includes(keyword))
+    );
+
+    if (matchedTopic) {
+      return {
+        content: matchedTopic.response,
+        insight: matchedTopic.insight,
+        businessAdvice: "Tactical business guidance from real experience"
+      };
+    }
   };
 
   return (
