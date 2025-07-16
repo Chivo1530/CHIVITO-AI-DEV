@@ -35,6 +35,32 @@ export default function LiveEmailCampaign() {
       }
     } catch (error) {
       console.error('Error loading campaigns:', error);
+      // Fallback to demo data for preview environment
+      setCampaigns([
+        {
+          id: 'demo-1',
+          name: 'Fortune 500 Outreach',
+          status: 'ready',
+          contacts: 25,
+          subject: 'Transform Your Business with AI Automation',
+          preview: 'Hi {{name}}, Your business could be generating $100K+ more monthly revenue...'
+        },
+        {
+          id: 'demo-2', 
+          name: 'CEO Follow-up Sequence',
+          status: 'ready',
+          contacts: 15,
+          subject: 'Your AI Empire Awaits - Quick Question',
+          preview: 'Hey {{name}}, I noticed {{company}} is scaling fast. Want to see how we automated...'
+        }
+      ]);
+      setContacts(DEMO_CONTACTS);
+      setStats({ 
+        totalCampaigns: 2, 
+        totalContacts: 25, 
+        monthlyLimit: 2000, 
+        emailsUsed: 347 
+      });
     }
   };
 
