@@ -162,15 +162,15 @@ What's your biggest time-waster right now? Let's eliminate it! ⚡`,
   };
 
   return (
-    <div className="bg-gradient-to-br from-gray-900 to-black rounded-xl p-6 border border-gray-800">
+    <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <div className="w-12 h-12 bg-gradient-to-br from-royal-red to-red-600 rounded-full flex items-center justify-center">
           <Crown className="w-6 h-6 text-white" />
         </div>
         <div>
-          <h3 className="text-xl font-bold text-white">Ponch AI Assistant</h3>
-          <p className="text-gray-400 text-sm">Your 24/7 Business Mentor</p>
+          <h3 className="text-xl font-bold text-gray-900">P$ AI Assistant</h3>
+          <p className="text-gray-600 text-sm">Your 24/7 Business Mentor</p>
         </div>
         <div className="ml-auto">
           <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
@@ -179,29 +179,29 @@ What's your biggest time-waster right now? Let's eliminate it! ⚡`,
 
       {/* Business Insights Panel */}
       {businessData && (
-        <div className="mb-6 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
+        <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
           <h4 className="text-sm font-semibold text-royal-red mb-2">
-            🎯 Ponch's Business Insights
+            🎯 P$'s Business Insights
           </h4>
           <div className="grid grid-cols-3 gap-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-white">20+</div>
-              <div className="text-xs text-gray-400">Hours/Week Saved</div>
+              <div className="text-2xl font-bold text-gray-900">20+</div>
+              <div className="text-xs text-gray-600">Hours/Week Saved</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-400">+25%</div>
-              <div className="text-xs text-gray-400">Revenue Increase</div>
+              <div className="text-2xl font-bold text-green-600">+25%</div>
+              <div className="text-xs text-gray-600">Revenue Increase</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-400">24/7</div>
-              <div className="text-xs text-gray-400">AI Execution</div>
+              <div className="text-2xl font-bold text-blue-600">24/7</div>
+              <div className="text-xs text-gray-600">AI Execution</div>
             </div>
           </div>
         </div>
       )}
 
       {/* Chat Messages */}
-      <div className="h-96 overflow-y-auto mb-4 space-y-4 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
+      <div className="h-96 overflow-y-auto mb-4 space-y-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
         {messages.map((message) => (
           <div
             key={message.id}
@@ -211,19 +211,19 @@ What's your biggest time-waster right now? Let's eliminate it! ⚡`,
               className={`max-w-[80%] p-3 rounded-lg ${
                 message.type === 'user'
                   ? 'bg-royal-red text-white'
-                  : 'bg-gray-800 text-gray-100'
+                  : 'bg-gray-100 text-gray-900'
               }`}
             >
               {message.type === 'assistant' && (
                 <div className="flex items-center gap-2 mb-2">
                   <Crown className="w-4 h-4 text-royal-red" />
-                  <span className="text-xs font-semibold text-royal-red">Ponch</span>
+                  <span className="text-xs font-semibold text-royal-red">P$</span>
                 </div>
               )}
               <div className="whitespace-pre-wrap">{message.content}</div>
               
               {message.ponchInsight && (
-                <div className="mt-2 p-2 bg-gray-700/50 rounded text-xs text-gray-300">
+                <div className="mt-2 p-2 bg-blue-50 rounded text-xs text-blue-800">
                   💡 {message.ponchInsight}
                 </div>
               )}
@@ -233,10 +233,10 @@ What's your biggest time-waster right now? Let's eliminate it! ⚡`,
         
         {isTyping && (
           <div className="flex justify-start">
-            <div className="bg-gray-800 text-gray-100 p-3 rounded-lg max-w-[80%]">
+            <div className="bg-gray-100 text-gray-900 p-3 rounded-lg max-w-[80%]">
               <div className="flex items-center gap-2 mb-2">
                 <Crown className="w-4 h-4 text-royal-red" />
-                <span className="text-xs font-semibold text-royal-red">Ponch</span>
+                <span className="text-xs font-semibold text-royal-red">P$</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-royal-red rounded-full animate-bounce"></div>
