@@ -54,7 +54,15 @@ export default function Dashboard() {
       setCurrentTime(new Date())
     }, 1000)
 
-    return () => clearInterval(timeInterval)
+    // Force clear loading state after 3 seconds as fallback
+    const fallbackTimer = setTimeout(() => {
+      setLoading(false)
+    }, 3000)
+
+    return () => {
+      clearInterval(timeInterval)
+      clearTimeout(fallbackTimer)
+    }
   }, [])
 
   const loadUserData = async () => {
