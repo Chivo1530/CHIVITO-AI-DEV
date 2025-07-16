@@ -3,7 +3,7 @@
 
 import { NextResponse } from 'next/server'
 import { supabase } from '../../../lib/supabase'
-import { generateStackCode } from '../../../lib/stack-generator'
+import { generateStackConfig } from '../../../lib/stack-generator'
 
 export async function GET(request) {
   try {
