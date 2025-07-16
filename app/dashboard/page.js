@@ -528,6 +528,12 @@ export default function Dashboard() {
           </div>
         )}
 
+        {activeTab === 'workflow-hub' && (
+          <div className="space-y-8 animate-fade-in">
+            <WorkflowHub />
+          </div>
+        )}
+
         {activeTab === 'email-campaigns' && (
           <div className="space-y-8 animate-fade-in">
             <LiveEmailCampaign />
