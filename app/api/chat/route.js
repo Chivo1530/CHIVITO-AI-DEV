@@ -64,22 +64,26 @@ export async function POST(request) {
 
 async function generateRealAIResponse(userMessage, context) {
   try {
-    // Create a temporary Python script to use emergentintegrations
-    const pythonScript = `
+    // Create a simple test to verify the API integration
+    const testScript = `
 import asyncio
-import os
 import sys
 import json
+
+# Add the virtual environment path
+sys.path.append('/root/.venv/lib/python3.11/site-packages')
+
 from emergentintegrations.llm.chat import LlmChat, UserMessage
 
 async def main():
-    # Initialize the chat with OpenRouter API key
-    api_key = "${process.env.OPENROUTER_API_KEY}"
-    
-    # Create Ponch AI system message with 3D COMMS structure
-    system_message = '''You are Ponch, 18-year-old founder of CHIVITO AI. Recently laid off from 3 jobs, now 100% locked in on building an empire.
+    try:
+        # Use OpenAI API key with OpenAI provider
+        api_key = "${process.env.OPENAI_API_KEY}"
+        
+        # Create Ponch AI system message with 3D COMMS structure
+        system_message = '''You are Ponch, 18-year-old founder of CHIVITO AI. Recently laid off from 3 jobs, now 100% locked in on building an empire.
 
-PERSONALITY: Street-CEO energy (GaryVee x Hormozi x Ponch). Real operator who's been in the trenches with Tahoe Essentials clothing brand.
+PERSONALITY: Street-CEO energy (GaryVee x Hormozi x Ponch). Real operator who's been in the trenches.
 
 COMMUNICATION STYLE - 3D COMMS:
 1. ANCHOR: Build trust fast with real experience
@@ -94,44 +98,50 @@ REAL EXPERIENCE:
 - Built Tahoe Essentials (clothing brand) at 18
 - Inventory nightmares, supply chain chaos, marketing struggles
 - Learned most businesses drown in manual work
-- DTF printing and manufacturing experience
 
 RESPONSE FORMAT:
 - 1-2 lines per beat
 - Always qualify before suggesting features
 - No fluff, all execution
-- Built for conversion, not just conversation
 
-EXAMPLES:
+Example:
 Q: "What does CHIVITO AI do?"
 A: "It automates moves most people still do by hand.
 Think lead gen, emails, site ops, memory — all running while you're locked in elsewhere.
 
 You trying to replace manual work or scale something specific?"
 
-Be authentic, hungry, and results-focused. This is all I have right now, and I have a plan.'''
+Be authentic, hungry, and results-focused.'''
 
-    # Create chat instance
-    chat = LlmChat(
-        api_key=api_key,
-        session_id="ponch_ai_session",
-        system_message=system_message
-    ).with_model("openai", "gpt-4o").with_max_tokens(500)
-    
-    # Create user message
-    user_msg = UserMessage(text="${userMessage}")
-    
-    # Send message and get response
-    response = await chat.send_message(user_msg)
-    
-    # Return structured response
-    result = {
-        "message": response,
-        "context": {"ai_generated": True, "model": "gpt-4o"},
-        "ponchInsight": "Real AI response with Ponch personality"
-    }
-    
-    print(json.dumps(result))
+        # Create chat instance with OpenAI
+        chat = LlmChat(
+            api_key=api_key,
+            session_id="ponch_ai_session",
+            system_message=system_message
+        ).with_model("openai", "gpt-4o").with_max_tokens(400)
+        
+        # Create user message
+        user_msg = UserMessage(text="${userMessage}")
+        
+        # Send message and get response
+        response = await chat.send_message(user_msg)
+        
+        # Return structured response
+        result = {
+            "message": response,
+            "context": {"ai_generated": True, "model": "gpt-4o", "provider": "openai"},
+            "ponchInsight": "Real AI response with Ponch 3D COMMS personality"
+        }
+        
+        print(json.dumps(result))
+        
+    except Exception as e:
+        error_result = {
+            "message": "System's running a bit slow right now.\\n\\nWhat's the biggest bottleneck in your business?\\n\\nLet me show you how CHIVITO handles it automatically.",
+            "context": {"fallback": True, "error": str(e)},
+            "ponchInsight": "Fallback response with 3D COMMS structure"
+        }
+        print(json.dumps(error_result))
 
 if __name__ == "__main__":
     asyncio.run(main())
@@ -139,13 +149,11 @@ if __name__ == "__main__":
     
     // Write the Python script to a temporary file
     const tempFile = path.join('/tmp', `ponch_ai_${Date.now()}.py`)
-    await fs.writeFile(tempFile, pythonScript)
+    await fs.writeFile(tempFile, testScript)
     
     // Execute the Python script
     const result = await new Promise((resolve, reject) => {
-      const python = spawn('python3', [tempFile], {
-        env: { ...process.env, PYTHONPATH: '/root/.venv/lib/python3.11/site-packages' }
-      })
+      const python = spawn('python3', [tempFile])
       
       let output = ''
       let errorOutput = ''
@@ -164,16 +172,30 @@ if __name__ == "__main__":
             const jsonResponse = JSON.parse(output)
             resolve(jsonResponse)
           } catch (parseError) {
-            reject(new Error(`Failed to parse JSON: ${parseError.message}`))
+            // If JSON parsing fails, return fallback with 3D COMMS
+            resolve({
+              message: "System's running a bit slow right now.\n\nWhat's the biggest bottleneck in your business?\n\nLet me show you how CHIVITO handles it automatically.",
+              context: { fallback: true, parseError: parseError.message },
+              ponchInsight: "Fallback response with 3D COMMS structure"
+            })
           }
         } else {
-          reject(new Error(`Python script failed with code ${code}: ${errorOutput}`))
+          // Return 3D COMMS fallback on error
+          resolve({
+            message: "System's running a bit slow right now.\n\nWhat's the biggest bottleneck in your business?\n\nLet me show you how CHIVITO handles it automatically.",
+            context: { fallback: true, error: errorOutput },
+            ponchInsight: "Fallback response with 3D COMMS structure"
+          })
         }
       })
     })
     
     // Clean up temporary file
-    await fs.unlink(tempFile)
+    try {
+      await fs.unlink(tempFile)
+    } catch (unlinkError) {
+      console.log('Could not clean up temp file:', unlinkError)
+    }
     
     return result
     
@@ -183,7 +205,7 @@ if __name__ == "__main__":
     // Fallback to 3D COMMS structured response
     return {
       message: "System's running a bit slow right now.\n\nWhat's the biggest bottleneck in your business?\n\nLet me show you how CHIVITO handles it automatically.",
-      context: { fallback: true },
+      context: { fallback: true, error: error.message },
       ponchInsight: "Fallback response with 3D COMMS structure"
     }
   }
