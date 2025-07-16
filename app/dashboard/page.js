@@ -298,6 +298,7 @@ export default function Dashboard() {
               { id: 'agents', label: 'AI Agents', icon: Bot },
               { id: 'leads', label: 'Lead Empire', icon: Users },
               { id: 'workflows', label: 'Automation', icon: Zap },
+              { id: 'workflow-hub', label: 'Workflow Hub', icon: Zap },
               { id: 'email-campaigns', label: 'Email Automation', icon: Mail },
               { id: 'assistant', label: 'AI Consultant', icon: MessageCircle },
               { id: 'analytics', label: 'Intelligence', icon: TrendingUp },
