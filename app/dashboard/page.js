@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Crown from '../../components/Crown'
 import PonchAIAssistant from '../../components/PonchAIAssistant'
 import LiveEmailCampaign from '../../components/LiveEmailCampaign'
+import WorkflowHub from '../../components/WorkflowHub'
 import { 
   Bot, 
   Activity, 
