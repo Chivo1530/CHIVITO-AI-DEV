@@ -743,39 +743,6 @@ class ChivitoAPITester:
                 
         except Exception as e:
             self.log_test("Data Consistency", False, str(e))
-        """Test data consistency across endpoints"""
-        print("\n🔍 Testing Data Consistency...")
-        
-        try:
-            # Get agents data
-            agents_response = requests.get(f"{self.base_url}/api/agents", timeout=10)
-            if agents_response.status_code == 200:
-                agents_data = agents_response.json()
-                agents = agents_data.get('agents', [])
-                
-                # Verify agent names match expected values
-                expected_agents = ['Lead Hunter', 'Content Creator', 'Sales Closer', 'Customer Support', 'Data Analyst', 'Social Media Manager']
-                actual_agents = [agent['name'] for agent in agents]
-                
-                if set(expected_agents) == set(actual_agents):
-                    self.log_test("Agent Names Consistency", True, "All expected agents present")
-                else:
-                    missing = set(expected_agents) - set(actual_agents)
-                    extra = set(actual_agents) - set(expected_agents)
-                    self.log_test("Agent Names Consistency", False, f"Missing: {missing}, Extra: {extra}")
-                
-                # Verify revenue values are realistic
-                total_revenue = sum(agent['revenue'] for agent in agents)
-                if 50000 <= total_revenue <= 150000:  # Reasonable range
-                    self.log_test("Revenue Values Consistency", True, f"Total revenue: ${total_revenue:,}")
-                else:
-                    self.log_test("Revenue Values Consistency", False, f"Unrealistic total revenue: ${total_revenue:,}")
-                    
-            else:
-                self.log_test("Data Consistency", False, "Could not retrieve agents data")
-                
-        except Exception as e:
-            self.log_test("Data Consistency", False, str(e))
 
     def test_all_18_api_endpoints(self):
         """Test all 18 API endpoints for deployment readiness"""
