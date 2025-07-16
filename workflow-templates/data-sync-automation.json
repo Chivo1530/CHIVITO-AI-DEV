@@ -1,0 +1,416 @@
+{
+  "name": "Data Sync Automation",
+  "active": true,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "start-node",
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "position": [240, 300],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "data-sync",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-node",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "position": [460, 300],
+      "webhookId": "data-sync-webhook",
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "customerId",
+              "value": "={{$node[\"Webhook\"].json[\"customerId\"]}}"
+            },
+            {
+              "name": "customerEmail",
+              "value": "={{$node[\"Webhook\"].json[\"email\"]}}"
+            },
+            {
+              "name": "customerName",
+              "value": "={{$node[\"Webhook\"].json[\"name\"]}}"
+            },
+            {
+              "name": "company",
+              "value": "={{$node[\"Webhook\"].json[\"company\"]}}"
+            },
+            {
+              "name": "dataSource",
+              "value": "={{$node[\"Webhook\"].json[\"source\"] || \"manual\"}}"
+            }
+          ]
+        }
+      },
+      "id": "set-customer-data",
+      "name": "Set Customer Data",
+      "type": "n8n-nodes-base.set",
+      "position": [680, 300],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "operation": "findOneAndUpdate",
+        "collection": "customers",
+        "upsert": true,
+        "fields": "customerId,customerEmail,customerName,company,lastSync,dataSource",
+        "options": {
+          "returnNewDocument": true
+        }
+      },
+      "id": "update-mongodb",
+      "name": "Update MongoDB",
+      "type": "n8n-nodes-base.mongoDb",
+      "position": [900, 300],
+      "typeVersion": 1,
+      "credentials": {
+        "mongoDb": {
+          "id": "mongodb-credentials",
+          "name": "MongoDB Credentials"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "hubspotContactId",
+              "value": "={{$node[\"Update MongoDB\"].json[\"_id\"]}}"
+            },
+            {
+              "name": "lastSync",
+              "value": "={{$now}}"
+            }
+          ]
+        }
+      },
+      "id": "prepare-hubspot-sync",
+      "name": "Prepare HubSpot Sync",
+      "type": "n8n-nodes-base.set",
+      "position": [1120, 200],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "resource": "contact",
+        "operation": "upsert",
+        "email": "={{$node[\"Set Customer Data\"].json[\"customerEmail\"]}}",
+        "additionalFields": {
+          "firstName": "={{$node[\"Set Customer Data\"].json[\"customerName\"].split(' ')[0]}}",
+          "lastName": "={{$node[\"Set Customer Data\"].json[\"customerName\"].split(' ')[1] || ''}}",
+          "company": "={{$node[\"Set Customer Data\"].json[\"company\"]}}",
+          "customProperties": {
+            "chivito_customer_id": "={{$node[\"Set Customer Data\"].json[\"customerId\"]}}",
+            "chivito_data_source": "={{$node[\"Set Customer Data\"].json[\"dataSource\"]}}",
+            "chivito_last_sync": "={{$node[\"Prepare HubSpot Sync\"].json[\"lastSync\"]}}"
+          }
+        }
+      },
+      "id": "sync-to-hubspot",
+      "name": "Sync to HubSpot",
+      "type": "n8n-nodes-base.hubSpot",
+      "position": [1340, 200],
+      "typeVersion": 2,
+      "credentials": {
+        "hubSpotApi": {
+          "id": "hubspot-credentials",
+          "name": "HubSpot API Credentials"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "mailchimpListId",
+              "value": "your-mailchimp-list-id"
+            },
+            {
+              "name": "syncStatus",
+              "value": "syncing"
+            }
+          ]
+        }
+      },
+      "id": "prepare-mailchimp-sync",
+      "name": "Prepare Mailchimp Sync",
+      "type": "n8n-nodes-base.set",
+      "position": [1120, 400],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "operation": "memberAdd",
+        "list": "={{$node[\"Prepare Mailchimp Sync\"].json[\"mailchimpListId\"]}}",
+        "email": "={{$node[\"Set Customer Data\"].json[\"customerEmail\"]}}",
+        "updateExisting": true,
+        "additionalFields": {
+          "mergeFields": {
+            "mergeFieldsValues": {
+              "FNAME": "={{$node[\"Set Customer Data\"].json[\"customerName\"].split(' ')[0]}}",
+              "LNAME": "={{$node[\"Set Customer Data\"].json[\"customerName\"].split(' ')[1] || ''}}",
+              "COMPANY": "={{$node[\"Set Customer Data\"].json[\"company\"]}}",
+              "CHIVITOID": "={{$node[\"Set Customer Data\"].json[\"customerId\"]}}"
+            }
+          },
+          "tags": ["chivito-customer", "automated-sync"]
+        }
+      },
+      "id": "sync-to-mailchimp",
+      "name": "Sync to Mailchimp",
+      "type": "n8n-nodes-base.mailchimp",
+      "position": [1340, 400],
+      "typeVersion": 2,
+      "credentials": {
+        "mailchimpApi": {
+          "id": "mailchimp-credentials",
+          "name": "Mailchimp API Credentials"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "googleSheetsId",
+              "value": "your-google-sheets-id"
+            },
+            {
+              "name": "worksheetName",
+              "value": "Customer Data"
+            }
+          ]
+        }
+      },
+      "id": "prepare-sheets-sync",
+      "name": "Prepare Sheets Sync",
+      "type": "n8n-nodes-base.set",
+      "position": [1560, 300],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": "={{$node[\"Prepare Sheets Sync\"].json[\"googleSheetsId\"]}}",
+        "sheetName": "={{$node[\"Prepare Sheets Sync\"].json[\"worksheetName\"]}}",
+        "columnToMatchOn": "Customer ID",
+        "valueToMatchOn": "={{$node[\"Set Customer Data\"].json[\"customerId\"]}}",
+        "valueInputOption": "USER_ENTERED",
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Customer ID": "={{$node[\"Set Customer Data\"].json[\"customerId\"]}}",
+            "Name": "={{$node[\"Set Customer Data\"].json[\"customerName\"]}}",
+            "Email": "={{$node[\"Set Customer Data\"].json[\"customerEmail\"]}}",
+            "Company": "={{$node[\"Set Customer Data\"].json[\"company\"]}}",
+            "Data Source": "={{$node[\"Set Customer Data\"].json[\"dataSource\"]}}",
+            "Last Sync": "={{$now}}",
+            "HubSpot Status": "={{$node[\"Sync to HubSpot\"].json[\"status\"] || \"synced\"}}",
+            "Mailchimp Status": "={{$node[\"Sync to Mailchimp\"].json[\"status\"] || \"synced\"}}"
+          }
+        }
+      },
+      "id": "sync-to-sheets",
+      "name": "Sync to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [1780, 300],
+      "typeVersion": 4,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google-sheets-credentials",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "values": {
+          "number": [
+            {
+              "name": "totalPlatformsSynced",
+              "value": 4
+            }
+          ],
+          "string": [
+            {
+              "name": "syncSummary",
+              "value": "Customer data synced across MongoDB, HubSpot, Mailchimp, and Google Sheets"
+            }
+          ]
+        }
+      },
+      "id": "calculate-sync-results",
+      "name": "Calculate Sync Results",
+      "type": "n8n-nodes-base.set",
+      "position": [2000, 300],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"success\": true,\n  \"customerId\": \"{{$node[\"Set Customer Data\"].json[\"customerId\"]}}\",\n  \"customerName\": \"{{$node[\"Set Customer Data\"].json[\"customerName\"]}}\",\n  \"platformsSynced\": {{$node[\"Calculate Sync Results\"].json[\"totalPlatformsSynced\"]}},\n  \"syncSummary\": \"{{$node[\"Calculate Sync Results\"].json[\"syncSummary\"]}}\",\n  \"timestamp\": \"{{$now}}\",\n  \"ponchInsight\": \"Customer data automatically synced across your entire tech stack - no manual work required!\"\n}"
+      },
+      "id": "respond-to-webhook",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "position": [2220, 300],
+      "typeVersion": 1
+    }
+  ],
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Set Customer Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Customer Data": {
+      "main": [
+        [
+          {
+            "node": "Update MongoDB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update MongoDB": {
+      "main": [
+        [
+          {
+            "node": "Prepare HubSpot Sync",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Prepare Mailchimp Sync",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare HubSpot Sync": {
+      "main": [
+        [
+          {
+            "node": "Sync to HubSpot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sync to HubSpot": {
+      "main": [
+        [
+          {
+            "node": "Prepare Sheets Sync",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Mailchimp Sync": {
+      "main": [
+        [
+          {
+            "node": "Sync to Mailchimp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sync to Mailchimp": {
+      "main": [
+        [
+          {
+            "node": "Prepare Sheets Sync",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Sheets Sync": {
+      "main": [
+        [
+          {
+            "node": "Sync to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sync to Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Calculate Sync Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Sync Results": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z",
+      "id": "3",
+      "name": "Operations"
+    }
+  ],
+  "triggerCount": 0,
+  "updatedAt": "2024-01-01T00:00:00.000Z",
+  "versionId": "1"
+}
