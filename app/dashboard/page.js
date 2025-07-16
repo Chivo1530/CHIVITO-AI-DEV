@@ -26,6 +26,7 @@ import {
   CheckCircle,
   Mail
 } from 'lucide-react'
+import WorkflowHub from '../../components/WorkflowHub'
 
 export default function Dashboard() {
   const [user, setUser] = useState(null)
