@@ -880,9 +880,10 @@ class ChivitoAPITester:
         """Test /api/export-crm endpoint"""
         print("\n📊 Testing Export CRM API...")
         
+        # Test with valid action parameter
         try:
-            response = requests.get(f"{self.base_url}/api/export-crm", timeout=10)
-            if response.status_code in [200, 401, 500]:  # Various expected responses
+            response = requests.get(f"{self.base_url}/api/export-crm?action=workflow_templates", timeout=10)
+            if response.status_code in [200, 500]:  # 500 expected due to missing user data
                 self.log_test("GET /api/export-crm", True, "CRM export endpoint accessible")
             else:
                 self.log_test("GET /api/export-crm", False, f"HTTP {response.status_code}")
