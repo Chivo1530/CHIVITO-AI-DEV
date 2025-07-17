@@ -126,7 +126,7 @@ async function adminLogin(credentials) {
     if (credentials.email === SUPER_ADMIN_EMAIL && credentials.password === SUPER_ADMIN_PASSWORD) {
       return NextResponse.json({
         success: true,
-        token: 'ponch-admin-token-2025',
+        token: process.env.ADMIN_TOKEN,
         adminLevel: 'super',
         message: '🧠 Welcome back, Ponch! Empire status: DOMINATING'
       })
