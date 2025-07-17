@@ -275,6 +275,10 @@ export default function Dashboard() {
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                 <span className="text-sm status-online">SYSTEM ONLINE</span>
               </div>
+              <div className="flex items-center space-x-2">
+                <MessageCircle className="w-4 h-4" />
+                <span>Support: hello@chivito.ai</span>
+              </div>
               <div className="text-sm text-gray-600 font-mono">
                 {isClient && currentTime ? currentTime.toLocaleTimeString() : '...'}
               </div>
