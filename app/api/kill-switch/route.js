@@ -357,7 +357,7 @@ async function verifyAdminAccess(request) {
     
     const token = authHeader.replace('Bearer ', '')
     
-    if (token === 'ponch-admin-token-2025') {
+    if (token === process.env.ADMIN_TOKEN) {
       return { success: true, adminLevel: 'super' }
     }
     
