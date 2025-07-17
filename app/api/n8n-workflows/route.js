@@ -4,7 +4,7 @@
 import { NextResponse } from 'next/server'
 
 // N8N API Configuration
-const N8N_API_KEY = process.env.N8N_API_KEY || '798bdfe570cfc6acdedf906cae8f1dbe'
+const N8N_API_KEY = process.env.N8N_API_KEY
 const N8N_BASE_URL = process.env.N8N_BASE_URL || 'http://localhost:5678'
 
 // Workflow execution storage (in production, use MongoDB)
