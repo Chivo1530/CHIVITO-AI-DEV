@@ -111,7 +111,7 @@ async function verifyAdminAccess(request) {
     
     // In production, verify JWT token
     // For now, use simple token verification
-    if (token === 'ponch-admin-token-2025') {
+    if (token === process.env.ADMIN_TOKEN) {
       return { success: true, adminLevel: 'super' }
     }
     
