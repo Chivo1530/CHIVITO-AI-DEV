@@ -1,0 +1,44 @@
+{
+  "name": "chivito-agent-homebase",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "deploy": "next build && next export",
+    "deploy-prod": "NODE_ENV=production next build && next start"
+  },
+  "dependencies": {
+    "@headlessui/react": "^2.2.4",
+    "@heroicons/react": "^2.2.0",
+    "@next-auth/supabase-adapter": "^0.2.1",
+    "@supabase/auth-helpers-nextjs": "^0.10.0",
+    "@supabase/auth-helpers-react": "^0.5.0",
+    "@supabase/auth-ui-react": "^0.4.7",
+    "@supabase/auth-ui-shared": "^0.1.8",
+    "@supabase/supabase-js": "^2.51.0",
+    "apollo-server-micro": "^3.13.0",
+    "axios": "^1.10.0",
+    "framer-motion": "^12.23.5",
+    "jszip": "^3.10.1",
+    "lucide-react": "^0.263.1",
+    "next": "14.0.4",
+    "next-auth": "^4.24.11",
+    "react": "^18",
+    "react-dom": "^18",
+    "stripe": "^18.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "autoprefixer": "^10.0.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.0.4",
+    "postcss": "^8",
+    "tailwindcss": "^3.3.0",
+    "typescript": "^5"
+  }
+}

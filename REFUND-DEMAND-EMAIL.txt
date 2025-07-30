@@ -1,0 +1,61 @@
+Subject: IMMEDIATE TOKEN REFUND REQUEST - Multiple Platform Failures
+
+Dear Emergent Support Team,
+
+I am writing to demand an immediate full refund of my tokens due to multiple critical platform failures that have rendered your service completely unusable.
+
+**PAYMENT DETAILS:**
+- Job ID: b807ab36-3ab5-4415-9777-f7f934222980
+- Tokens Purchased: [ENTER AMOUNT]
+- Payment Date: [ENTER DATE]
+
+**DOCUMENTED PLATFORM FAILURES:**
+
+1. **DEPLOYMENT API FAILURE**
+   - Error: "api.emergent.sh/jobs/v0/deploy Failed to load resource: the server responded with a status of 400"
+   - Multiple deployment attempts all failing with 400 Bad Request
+   - No error logs or meaningful error messages provided
+
+2. **ENVIRONMENT VARIABLES UI COMPLETELY BROKEN**
+   - "Env Variables" dropdown completely non-functional
+   - Cannot click or expand the environment variables section
+   - Critical feature required for deployment is completely inaccessible
+
+3. **GITHUB SAVE FUNCTIONALITY BROKEN**
+   - "Save to GitHub" feature failing
+   - Unable to save completed work to version control
+   - Critical backup functionality non-operational
+
+4. **CORE PLATFORM SERVICES FAILING**
+   - Console shows repeated API failures and connection errors
+   - WebSocket connections failing (ws://localhost:8098/)
+   - Multiple 502 Bad Gateway errors
+
+**BUSINESS IMPACT:**
+- Hours of development time wasted fighting platform bugs
+- Unable to deploy completed application despite successful local builds
+- Cannot demonstrate value to clients due to platform failures
+- Paid for services that are fundamentally broken
+
+**TECHNICAL EVIDENCE:**
+My application builds successfully (Next.js 14.0.4, 25/25 pages generated) with no code errors. The failures are entirely on your platform's infrastructure, not user error.
+
+**IMMEDIATE RESOLUTION REQUIRED:**
+
+I demand either:
+1. **FULL TOKEN REFUND** for services that were paid for but cannot be used
+2. **IMMEDIATE PLATFORM FIX** with working deployment and environment variable functionality
+3. **ESCALATION TO TECHNICAL MANAGEMENT** for emergency resolution
+
+This level of platform instability is unacceptable for a paid service. I have documented evidence of all failures and expect immediate action.
+
+I will be sharing this experience publicly if not resolved within 24 hours.
+
+Regards,
+[YOUR NAME]
+[YOUR EMAIL]
+
+**EVIDENCE ATTACHED:**
+- Console error screenshots
+- Failed deployment attempt logs
+- Documentation of UI functionality failures

@@ -1,0 +1,277 @@
+{
+  "name": "Lead Scoring Automation",
+  "active": true,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "start-node",
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "position": [240, 300],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lead-scoring",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-node",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "position": [460, 300],
+      "webhookId": "lead-scoring-webhook",
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "values": {
+          "number": [
+            {
+              "name": "baseScore",
+              "value": 0
+            },
+            {
+              "name": "finalScore",
+              "value": 0
+            }
+          ],
+          "string": [
+            {
+              "name": "leadEmail",
+              "value": "={{$node[\"Webhook\"].json[\"email\"]}}"
+            },
+            {
+              "name": "leadName",
+              "value": "={{$node[\"Webhook\"].json[\"name\"]}}"
+            },
+            {
+              "name": "company",
+              "value": "={{$node[\"Webhook\"].json[\"company\"]}}"
+            }
+          ]
+        }
+      },
+      "id": "set-lead-data",
+      "name": "Set Lead Data",
+      "type": "n8n-nodes-base.set",
+      "position": [680, 300],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{$node[\"Set Lead Data\"].json[\"company\"]}}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ]
+        },
+        "combineOperation": "all"
+      },
+      "id": "company-check",
+      "name": "Has Company?",
+      "type": "n8n-nodes-base.if",
+      "position": [900, 300],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "values": {
+          "number": [
+            {
+              "name": "baseScore",
+              "value": "={{$node[\"Set Lead Data\"].json[\"baseScore\"] + 25}}"
+            }
+          ]
+        }
+      },
+      "id": "add-company-score",
+      "name": "Add Company Score",
+      "type": "n8n-nodes-base.set",
+      "position": [1120, 200],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{$node[\"Set Lead Data\"].json[\"leadEmail\"]}}",
+              "rightValue": "@gmail.com",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ]
+        },
+        "combineOperation": "all"
+      },
+      "id": "business-email-check",
+      "name": "Business Email?",
+      "type": "n8n-nodes-base.if",
+      "position": [1340, 300],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "values": {
+          "number": [
+            {
+              "name": "finalScore",
+              "value": "={{$node[\"Add Company Score\"].json[\"baseScore\"] + 35}}"
+            }
+          ],
+          "string": [
+            {
+              "name": "scoreCategory",
+              "value": "={{$node[\"Add Company Score\"].json[\"finalScore\"] > 60 ? \"Hot Lead\" : $node[\"Add Company Score\"].json[\"finalScore\"] > 30 ? \"Warm Lead\" : \"Cold Lead\"}}"
+            }
+          ]
+        }
+      },
+      "id": "calculate-final-score",
+      "name": "Calculate Final Score",
+      "type": "n8n-nodes-base.set",
+      "position": [1560, 200],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"success\": true,\n  \"leadName\": \"{{$node[\"Set Lead Data\"].json[\"leadName\"]}}\",\n  \"leadEmail\": \"{{$node[\"Set Lead Data\"].json[\"leadEmail\"]}}\",\n  \"company\": \"{{$node[\"Set Lead Data\"].json[\"company\"]}}\",\n  \"score\": {{$node[\"Calculate Final Score\"].json[\"finalScore\"]}},\n  \"category\": \"{{$node[\"Calculate Final Score\"].json[\"scoreCategory\"]}}\",\n  \"timestamp\": \"{{$now}}\",\n  \"ponchInsight\": \"Lead scored automatically using CHIVITO AI - ready for sales follow-up!\"\n}"
+      },
+      "id": "respond-to-webhook",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "position": [1780, 300],
+      "typeVersion": 1
+    }
+  ],
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Set Lead Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Lead Data": {
+      "main": [
+        [
+          {
+            "node": "Has Company?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Company?": {
+      "main": [
+        [
+          {
+            "node": "Add Company Score",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Business Email?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Company Score": {
+      "main": [
+        [
+          {
+            "node": "Business Email?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Business Email?": {
+      "main": [
+        [
+          {
+            "node": "Calculate Final Score",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Calculate Final Score",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Final Score": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z",
+      "id": "1",
+      "name": "Sales"
+    }
+  ],
+  "triggerCount": 0,
+  "updatedAt": "2024-01-01T00:00:00.000Z",
+  "versionId": "1"
+}

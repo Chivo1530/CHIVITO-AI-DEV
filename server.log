@@ -1,0 +1,35 @@
+
+> chivito-agent-homebase@0.1.0 dev
+> next dev
+
+ ⚠ Port 3000 is in use, trying 3001 instead.
+   ▲ Next.js 14.0.4
+   - Local:        http://localhost:3001
+
+ ⚠ Invalid next.config.js options detected: 
+ ⚠     Unrecognized key(s) in object: 'appDir' at "experimental"
+ ⚠ See more info here: https://nextjs.org/docs/messages/invalid-next-config
+ ✓ Ready in 1369ms
+ ○ Compiling /api/agents ...
+ ✓ Compiled /api/agents in 782ms (38 modules)
+ ✓ Compiled /api/lead in 98ms (40 modules)
+Lead processed: {
+  name: 'Test User',
+  email: 'test@example.com',
+  message: "I'm interested in your AI automation services for my business. This is urgent!",
+  score: 80,
+  priority: 'HIGH',
+  aiResponse: "Hi Test User! 🚀 Thanks for reaching out to CHIVITO AI. Based on your inquiry, I've identified you as a HIGH priority lead. Our AI agents are analyzing your needs and will connect you with the perfect solution within 24 hours!",
+  processed: true,
+  timestamp: '2025-07-15T06:29:53.214Z'
+}
+ ✓ Compiled /api/chat in 80ms (42 modules)
+ ✓ Compiled /api/workflows in 54ms (44 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 3.7s (458 modules)
+ ✓ Compiled in 459ms (236 modules)
+ ✓ Compiled in 2.1s (236 modules)
+ ✓ Compiled in 1894ms (236 modules)
+ ✓ Compiled in 1277ms (236 modules)
+ ✓ Compiled in 1610ms (236 modules)
+[?25h

@@ -1,0 +1,336 @@
+{
+  "name": "Email Sequence Automation",
+  "active": true,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "start-node",
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "position": [240, 300],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "email-sequence",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-node",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "position": [460, 300],
+      "webhookId": "email-sequence-webhook",
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "recipientEmail",
+              "value": "={{$node[\"Webhook\"].json[\"email\"]}}"
+            },
+            {
+              "name": "recipientName",
+              "value": "={{$node[\"Webhook\"].json[\"name\"]}}"
+            },
+            {
+              "name": "company",
+              "value": "={{$node[\"Webhook\"].json[\"company\"]}}"
+            },
+            {
+              "name": "sequenceType",
+              "value": "={{$node[\"Webhook\"].json[\"sequenceType\"] || \"lead_nurture\"}}"
+            }
+          ]
+        }
+      },
+      "id": "set-email-data",
+      "name": "Set Email Data",
+      "type": "n8n-nodes-base.set",
+      "position": [680, 300],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{$node[\"Set Email Data\"].json[\"sequenceType\"]}}",
+              "rightValue": "lead_nurture",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        },
+        "combineOperation": "all"
+      },
+      "id": "sequence-type-check",
+      "name": "Sequence Type?",
+      "type": "n8n-nodes-base.if",
+      "position": [900, 300],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "emailSubject",
+              "value": "🚀 {{$node[\"Set Email Data\"].json[\"company\"]}} - Let's automate your operations"
+            },
+            {
+              "name": "emailBody",
+              "value": "Hi {{$node[\"Set Email Data\"].json[\"recipientName\"]}},\n\nI'm Ponch, 18 years old and founder of CHIVITO AI. Just got laid off from 3 jobs, but this is all I have right now - and I have a plan.\n\nBuilt Tahoe Essentials (my clothing brand) and dealt with inventory nightmares, supply chain chaos, marketing struggles. That's why CHIVITO exists.\n\nIt automates moves most people still do by hand:\n• Lead generation (like this email)\n• Customer support\n• Sales follow-up\n• Revenue tracking\n\nThink of it as your Swiss Army knife for {{$node[\"Set Email Data\"].json[\"company\"]}} operations.\n\nYou trying to replace manual work or scale something specific?\n\nLet's talk. I can show you exactly how this works for your business.\n\n- Ponch\nFounder, CHIVITO AI\n\nP.S. This email was sent automatically by CHIVITO AI. Pretty cool, right?"
+            }
+          ]
+        }
+      },
+      "id": "create-nurture-email",
+      "name": "Create Nurture Email",
+      "type": "n8n-nodes-base.set",
+      "position": [1120, 200],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "emailSubject",
+              "value": "⚡ Quick follow-up - {{$node[\"Set Email Data\"].json[\"company\"]}} automation"
+            },
+            {
+              "name": "emailBody",
+              "value": "{{$node[\"Set Email Data\"].json[\"recipientName\"]}},\n\nPonch here again. Quick follow-up on automating {{$node[\"Set Email Data\"].json[\"company\"]}} operations.\n\nMost businesses waste 6+ hours daily on manual tasks. CHIVITO handles:\n• Lead generation\n• Email outreach (like this)\n• Customer support\n• Sales pipeline management\n\nReal results, not just promises.\n\nWant to see it work for your business? I can show you in 15 minutes.\n\n- Ponch\n\nP.S. This follow-up was automated too. See the pattern?"
+            }
+          ]
+        }
+      },
+      "id": "create-followup-email",
+      "name": "Create Follow-up Email",
+      "type": "n8n-nodes-base.set",
+      "position": [1120, 400],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "operation": "sendEmail",
+        "subject": "={{$node[\"Create Nurture Email\"].json[\"emailSubject\"] || $node[\"Create Follow-up Email\"].json[\"emailSubject\"]}}",
+        "emailType": "text",
+        "message": "={{$node[\"Create Nurture Email\"].json[\"emailBody\"] || $node[\"Create Follow-up Email\"].json[\"emailBody\"]}}",
+        "toEmail": "={{$node[\"Set Email Data\"].json[\"recipientEmail\"]}}",
+        "fromEmail": "ponch@chivito.ai",
+        "fromName": "Ponch - CHIVITO AI"
+      },
+      "id": "send-email",
+      "name": "Send Email",
+      "type": "n8n-nodes-base.emailSend",
+      "position": [1340, 300],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "amount": 300,
+        "unit": "seconds"
+      },
+      "id": "wait-5-minutes",
+      "name": "Wait 5 Minutes",
+      "type": "n8n-nodes-base.wait",
+      "position": [1560, 300],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "followupSubject",
+              "value": "🧠 One more thing about {{$node[\"Set Email Data\"].json[\"company\"]}} automation..."
+            },
+            {
+              "name": "followupBody",
+              "value": "{{$node[\"Set Email Data\"].json[\"recipientName\"]}},\n\nOne more thing - I just triggered this entire email sequence from my dashboard while on a call with another prospect.\n\nThey watched the automation run in real-time. That's the power of CHIVITO AI.\n\nWhile others talk about automation, we actually execute it.\n\nReady to see your business run automatically?\n\n- Ponch\n\nP.S. Check out the timestamp - this email was perfectly timed by AI."
+            }
+          ]
+        }
+      },
+      "id": "create-final-email",
+      "name": "Create Final Email",
+      "type": "n8n-nodes-base.set",
+      "position": [1780, 300],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "operation": "sendEmail",
+        "subject": "={{$node[\"Create Final Email\"].json[\"followupSubject\"]}}",
+        "emailType": "text",
+        "message": "={{$node[\"Create Final Email\"].json[\"followupBody\"]}}",
+        "toEmail": "={{$node[\"Set Email Data\"].json[\"recipientEmail\"]}}",
+        "fromEmail": "ponch@chivito.ai",
+        "fromName": "Ponch - CHIVITO AI"
+      },
+      "id": "send-final-email",
+      "name": "Send Final Email",
+      "type": "n8n-nodes-base.emailSend",
+      "position": [2000, 300],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"success\": true,\n  \"recipient\": \"{{$node[\"Set Email Data\"].json[\"recipientEmail\"]}}\",\n  \"sequence\": \"{{$node[\"Set Email Data\"].json[\"sequenceType\"]}}\",\n  \"emailsSent\": 2,\n  \"timestamp\": \"{{$now}}\",\n  \"ponchInsight\": \"Email sequence launched automatically - prospect is getting personalized follow-ups!\"\n}"
+      },
+      "id": "respond-to-webhook",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "position": [2220, 300],
+      "typeVersion": 1
+    }
+  ],
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Set Email Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Email Data": {
+      "main": [
+        [
+          {
+            "node": "Sequence Type?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sequence Type?": {
+      "main": [
+        [
+          {
+            "node": "Create Nurture Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Follow-up Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Nurture Email": {
+      "main": [
+        [
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Follow-up Email": {
+      "main": [
+        [
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email": {
+      "main": [
+        [
+          {
+            "node": "Wait 5 Minutes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 5 Minutes": {
+      "main": [
+        [
+          {
+            "node": "Create Final Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Final Email": {
+      "main": [
+        [
+          {
+            "node": "Send Final Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Final Email": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z",
+      "id": "2",
+      "name": "Marketing"
+    }
+  ],
+  "triggerCount": 0,
+  "updatedAt": "2024-01-01T00:00:00.000Z",
+  "versionId": "1"
+}

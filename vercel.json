@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "name": "chivito-ai",
+  "framework": "nextjs",
+  "buildCommand": "yarn build",
+  "outputDirectory": ".next",
+  "installCommand": "yarn install",
+  "env": {
+    "NEXT_PUBLIC_SUPABASE_URL": "@supabase_url",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@supabase_anon_key"
+  },
+  "build": {
+    "env": {
+      "OPENAI_API_KEY": "@openai_api_key",
+      "OPENROUTER_API_KEY": "@openrouter_api_key",
+      "GOOGLE_AI_STUDIO_API_KEY": "@google_ai_studio_api_key",
+      "MISTRAL_API_KEY": "@mistral_api_key",
+      "ELEVENLABS_API_KEY": "@elevenlabs_api_key",
+      "APOLLO_API_KEY": "@apollo_api_key",
+      "STRIPE_SECRET_KEY": "@stripe_secret_key",
+      "EMAIL_SNEEK_API_KEY": "@email_sneek_api_key",
+      "N8N_API_KEY": "@n8n_api_key",
+      "SUPABASE_URL": "@supabase_url",
+      "SUPABASE_ANON_KEY": "@supabase_anon_key",
+      "SUPABASE_SERVICE_KEY": "@supabase_service_key",
+      "TRIEVE_API_KEY": "@trieve_api_key",
+      "GOOGLE_CLIENT_ID": "@google_client_id",
+      "GOOGLE_CLIENT_SECRET": "@google_client_secret",
+      "GOOGLE_DRIVE_CLIENT_ID": "@google_drive_client_id",
+      "GOOGLE_DRIVE_CLIENT_SECRET": "@google_drive_client_secret",
+      "GOOGLE_MAPS_API_KEY": "@google_maps_api_key",
+      "DISCORD_BOT_TOKEN": "@discord_bot_token",
+      "DISCORD_APP_ID": "@discord_app_id",
+      "DISCORD_PUBLIC_KEY": "@discord_public_key",
+      "NEXTAUTH_URL": "@nextauth_url",
+      "NEXTAUTH_SECRET": "@nextauth_secret",
+      "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY": "@stripe_publishable_key"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    }
+  ]
+}
