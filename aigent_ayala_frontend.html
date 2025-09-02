@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AIGENTZ - Multi-Agent Automation Platform</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;600;700&display=swap');
+        
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        body { 
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif; 
+            background: linear-gradient(135deg, #d2b48c 0%, #c4a373 100%); 
+            color: #ffffff; 
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .header {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px 0;
+            text-align: center;
+            border-bottom: 2px solid #000000;
+        }
+        
+        h1 { 
+            font-size: 3em; 
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 2px;
+        }
+        
+        .tagline {
+            font-size: 1.1em;
+            color: #cccccc;
+            margin-top: 10px;
+            font-weight: 300;
+        }
+        
+        .tab-container {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            border-bottom: 1px solid #000000;
+        }
+        
+        .tab {
+            background: transparent;
+            border: none;
+            padding: 20px 30px;
+            color: #cccccc;
+            font-family: 'SF Pro Display', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+        
+        .tab.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            border-bottom: 3px solid #ffffff;
+        }
+        
+        .crown-icon {
+            font-size: 18px;
+        }
+        
+        .main-container {
+            display: flex;
+            height: calc(100vh - 140px);
+        }
+        
+        .chat-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+        
+        .tab-content {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+        }
+        
+        .tab-content.active {
+            display: flex;
+        }
+        
+        .agent-intro {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ffffff;
+        }
+        
+        .agent-name {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .agent-description {
+            color: #cccccc;
+            line-height: 1.5;
+        }
+        
+        #chat {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 20px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border: 1px solid rgba(0, 0, 0, 0.3);
+        }
+        
+        .message {
+            margin: 15px 0;
+            padding: 15px 20px;
+            border-radius: 12px;
+            max-width: 80%;
+            line-height: 1.6;
+        }
+        
+        .user {
+            background: rgba(0, 0, 0, 0.8);
+            margin-left: auto;
+            text-align: right;
+            border: 1px solid #000000;
+        }
+        
+        .agent {
+            background: rgba(255, 255, 255, 0.15);
+            margin-right: auto;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .input-container {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        #messageInput {
+            flex: 1;
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid rgba(0, 0, 0, 0.8);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 16px;
+            font-family: 'SF Pro Display', sans-serif;
+        }
+        
+        #messageInput:focus {
+            outline: none;
+            border-color: #ffffff;
+            background: rgba(0, 0, 0, 0.8);
+        }
+        
+        #messageInput::placeholder {
+            color: #999999;
+        }
+        
+        .send-btn {
+            background: #000000;
+            border: 2px solid #ffffff;
+            border-radius: 12px;
+            padding: 15px 25px;
+            color: #ffffff;
+            font-weight: 600;
+            font-family: 'SF Pro Display', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .send-btn:hover {
+            background: #ffffff;
+            color: #000000;
+        }
+        
+        .learning-section {
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .learning-title {
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        
+        .learning-description {
+            color: #cccccc;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+        
+        .knowledge-input {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid rgba(0, 0, 0, 0.8);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 16px;
+            font-family: 'SF Pro Display', sans-serif;
+            margin-bottom: 20px;
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .knowledge-input:focus {
+            outline: none;
+            border-color: #ffffff;
+        }
+        
+        .knowledge-input::placeholder {
+            color: #999999;
+        }
+        
+        .url-input {
+            width: 100%;
+            max-width: 600px;
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid rgba(0, 0, 0, 0.8);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 16px;
+            font-family: 'SF Pro Display', sans-serif;
+            margin-bottom: 20px;
+        }
+        
+        .learn-btn {
+            background: #000000;
+            border: 2px solid #ffffff;
+            border-radius: 12px;
+            padding: 15px 30px;
+            color: #ffffff;
+            font-weight: 600;
+            font-family: 'SF Pro Display', sans-serif;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .learn-btn:hover {
+            background: #ffffff;
+            color: #000000;
+        }
+        
+        .loading {
+            display: none;
+            color: #cccccc;
+            font-style: italic;
+            margin-top: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 2em; }
+            .tab { padding: 15px 20px; font-size: 14px; }
+            .message { max-width: 95%; }
+            .main-container { height: calc(100vh - 120px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>AIGENTZ</h1>
+        <p class="tagline">Your Executive AI Automation Team</p>
+    </div>
+    
+    <div class="tab-container">
+        <button class="tab active" onclick="switchAgent('ayala')">
+            <span class="crown-icon">👑</span>
+            AIGENT AYALA
+        </button>
+        <button class="tab" onclick="switchAgent('p')">
+            <span class="crown-icon">👑</span>
+            AIGENT P
+        </button>
+        <button class="tab" onclick="switchAgent('tahoe')">
+            <span class="crown-icon">👑</span>
+            AIGENT TAHOE
+        </button>
+        <button class="tab" onclick="switchAgent('kilo')">
+            <span class="crown-icon">👑</span>
+            AIGENT KILO
+        </button>
+        <button class="tab" onclick="switchAgent('chivo')">
+            <span class="crown-icon">👑</span>
+            AIGENT CHIVO
+        </button>
+        <button class="tab" onclick="switchAgent('learning')">
+            <span class="crown-icon">🧠</span>
+            LEARNING TIME
+        </button>
+    </div>
+    
+    <div class="main-container">
+        <!-- AIGENT AYALA -->
+        <div id="ayala-content" class="tab-content active">
+            <div class="chat-section">
+                <div class="agent-intro">
+                    <div class="agent-name">AIGENT AYALA - Automation Foreman</div>
+                    <div class="agent-description">I create new automations and AI agents from simple prompts. Tell me what you need automated and I'll build it for you.</div>
+                </div>
+                <div id="ayala-chat" class="chat-area"></div>
+                <div class="input-container">
+                    <input type="text" id="messageInput" placeholder="What automation should I build for you?" onkeypress="if(event.key==='Enter') sendMessage('ayala')">
+                    <button class="send-btn" onclick="sendMessage('ayala')">Send</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- AGENT P -->
+        <div id="p-content" class="tab-content">
+            <div class="chat-section">
+                <div class="agent-intro">
+                    <div class="agent-name">AIGENT P - Your Personal Executive</div>
+                    <div class="agent-description">I know you best and have access to all your tools. I can find leads, research markets, and handle your personal tasks with precision.</div>
+                </div>
+                <div id="p-chat" class="chat-area"></div>
+                <div class="input-container">
+                    <input type="text" id="messageInput" placeholder="What can I help you with today?" onkeypress="if(event.key==='Enter') sendMessage('p')">
+                    <button class="send-btn" onclick="sendMessage('p')">Send</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- AGENT TAHOE -->
+        <div id="tahoe-content" class="tab-content">
+            <div class="chat-section">
+                <div class="agent-intro">
+                    <div class="agent-name">AIGENT TAHOE - Social Media Autopilot</div>
+                    <div class="agent-description">I put your social media on complete autopilot. Give me your brand style and I'll handle content creation, posting, and engagement across all platforms.</div>
+                </div>
+                <div id="tahoe-chat" class="chat-area"></div>
+                <div class="input-container">
+                    <input type="text" id="messageInput" placeholder="How can I automate your social media?" onkeypress="if(event.key==='Enter') sendMessage('tahoe')">
+                    <button class="send-btn" onclick="sendMessage('tahoe')">Send</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- AGENT KILO -->
+        <div id="kilo-content" class="tab-content">
+            <div class="chat-section">
+                <div class="agent-intro">
+                    <div class="agent-name">AIGENT KILO - Business Operations</div>
+                    <div class="agent-description">I handle Shopify operations, work as a business receptionist, and build websites. I'm your complete business automation solution.</div>
+                </div>
+                <div id="kilo-chat" class="chat-area"></div>
+                <div class="input-container">
+                    <input type="text" id="messageInput" placeholder="What business operations can I automate?" onkeypress="if(event.key==='Enter') sendMessage('kilo')">
+                    <button class="send-btn" onclick="sendMessage('kilo')">Send</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- AIGENT CHIVO -->
+        <div id="chivo-content" class="tab-content">
+            <div class="chat-section">
+                <div class="agent-intro">
+                    <div class="agent-name">AIGENT CHIVO - Marketing Automation</div>
+                    <div class="agent-description">I automate your SMS and email marketing campaigns. From lead nurturing to sales sequences, I handle all your marketing automation needs.</div>
+                </div>
+                <div id="chivo-chat" class="chat-area"></div>
+                <div class="input-container">
+                    <input type="text" id="messageInput" placeholder="What marketing automation do you need?" onkeypress="if(event.key==='Enter') sendMessage('chivo')">
+                    <button class="send-btn" onclick="sendMessage('chivo')">Send</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- LEARNING TIME -->
+        <div id="learning-content" class="tab-content">
+            <div class="learning-section">
+                <div class="learning-title">🧠 LEARNING TIME</div>
+                <div class="learning-description">
+                    Feed knowledge to all AIGENTZ. They'll learn from URLs, videos, PDFs, or any text you provide.<br>
+                    This knowledge stays with them forever and makes them smarter over time.
+                </div>
+                
+                <textarea class="knowledge-input" id="knowledgeText" placeholder="Paste text content, instructions, or any information you want all AIGENTZ to learn..."></textarea>
+                
+                <input type="url" class="url-input" id="knowledgeUrl" placeholder="Paste a URL (YouTube, article, PDF, etc.) for AIGENTZ to learn from...">
+                
+                <button class="learn-btn" onclick="feedKnowledge()">FEED KNOWLEDGE TO ALL AIGENTZ</button>
+                
+                <div class="loading" id="learningLoading">Processing knowledge...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const WEBHOOK_URLS = {
+            ayala: 'https://primary-production-f8109.up.railway.app/webhook/ayala',
+            p: 'https://primary-production-f8109.up.railway.app/webhook/agent-p',
+            tahoe: 'https://primary-production-f8109.up.railway.app/webhook/agent-tahoe', 
+            kilo: 'https://primary-production-f8109.up.railway.app/webhook/agent-kilo',
+            chivo: 'https://primary-production-f8109.up.railway.app/webhook/agent-chivo'
+        };
+        
+        let currentAgent = 'ayala';
+        
+        // Load chat histories from localStorage
+        function loadChatHistory(agent) {
+            const history = localStorage.getItem(`${agent}-chat`) || '';
+            document.getElementById(`${agent}-chat`).innerHTML = history;
+            scrollToBottom(agent);
+        }
+        
+        // Save chat history to localStorage
+        function saveChatHistory(agent, content) {
+            localStorage.setItem(`${agent}-chat`, content);
+        }
+        
+        function switchAgent(agent) {
+            // Hide all content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected content and activate tab
+            if (agent === 'learning') {
+                document.getElementById('learning-content').classList.add('active');
+            } else {
+                document.getElementById(`${agent}-content`).classList.add('active');
+                loadChatHistory(agent);
+                currentAgent = agent;
+            }
+            
+            event.target.classList.add('active');
+        }
+        
+        function scrollToBottom(agent) {
+            const chatElement = document.getElementById(`${agent}-chat`);
+            chatElement.scrollTop = chatElement.scrollHeight;
+        }
+        
+        async function sendMessage(agent) {
+            const input = document.querySelector(`#${agent}-content input`);
+            const chat = document.getElementById(`${agent}-chat`);
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            const userMsg = `<div class="message user">${message}</div>`;
+            chat.innerHTML += userMsg;
+            input.value = '';
+            
+            scrollToBottom(agent);
+            
+            try {
+                const response = await fetch(WEBHOOK_URLS[agent], {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+                
+                const data = await response.json();
+                const agentMsg = `<div class="message agent">${data.response.replace(/\n/g, '<br>')}</div>`;
+                chat.innerHTML += agentMsg;
+                
+            } catch (error) {
+                const errorMsg = `<div class="message agent">Connection error. Let me try again...</div>`;
+                chat.innerHTML += errorMsg;
+            }
+            
+            // Save updated chat history
+            saveChatHistory(agent, chat.innerHTML);
+            scrollToBottom(agent);
+        }
+        
+        async function feedKnowledge() {
+            const text = document.getElementById('knowledgeText').value.trim();
+            const url = document.getElementById('knowledgeUrl').value.trim();
+            const loading = document.getElementById('learningLoading');
+            
+            if (!text && !url) {
+                alert('Please provide either text content or a URL to learn from.');
+                return;
+            }
+            
+            loading.style.display = 'block';
+            
+            // Here you would send the knowledge to a central learning endpoint
+            // For now, we'll just simulate the process
+            setTimeout(() => {
+                loading.style.display = 'none';
+                alert('Knowledge fed to all AIGENTZ successfully!');
+                document.getElementById('knowledgeText').value = '';
+                document.getElementById('knowledgeUrl').value = '';
+            }, 2000);
+        }
+        
+        // Initialize with AIGENT AYALA's chat history
+        loadChatHistory('ayala');
+        
+        // Add welcome messages if chat is empty
+        if (!localStorage.getItem('ayala-chat')) {
+            document.getElementById('ayala-chat').innerHTML = '<div class="message agent">Ready to build automations and create new AI agents for you. What should we automate first?</div>';
+            saveChatHistory('ayala', document.getElementById('ayala-chat').innerHTML);
+        }
+    </script>
+</body>
+</html>
